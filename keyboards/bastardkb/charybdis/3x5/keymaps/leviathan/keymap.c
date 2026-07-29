@@ -32,7 +32,6 @@ enum charybdis_keymap_layers {
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAT
 
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
-// static uint16_t auto_pointer_layer_timer = 0;
 
 #    ifndef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS
 #        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000
@@ -44,9 +43,22 @@ enum charybdis_keymap_layers {
 
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
+// Enable auto pointer
 void keyboard_post_init_user(void) {
     set_auto_mouse_enable(true);
 }
+
+// Enable tri layer
+layer_state_t layer_state_set_user(layer_state_t state) {
+    return update_tri_layer_state(state, LAYER_SYM, LAYER_NAV, LAYER_FUN);
+}
+
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
+    (void)record;
+    return keycode == DRGSCRL;
+}
+#endif
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
@@ -80,8 +92,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     HRML(KC_A, KC_R, KC_S, KC_T), KC_G,
     KC_M, HRMR(KC_N, KC_E, KC_I, KC_O),
     // row 3
-    KC_Z, KC_X, KC_C, KC_D, KC_V,
-    KC_K, KC_H, KC_COMM, KC_DOT, RSQT,
+    LT(LAYER_RAT, KC_Z), KC_X, KC_C, KC_D, KC_V,
+    KC_K, KC_H, KC_COMM, KC_DOT, LT(LAYER_RAT, RSQT),
     // thumbs
     OS_LGUI, LT(LAYER_SYM, KC_SPC), OS_LSFT,
     OS_RCTL, LT(LAYER_NAV, KC_BSPC)
