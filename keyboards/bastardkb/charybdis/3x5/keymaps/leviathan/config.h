@@ -40,3 +40,5 @@
 #undef RGBLIGHT_LED_COUNT
 #endif
 #define RGBLIGHT_LED_COUNT 36
+
+#define ONESHOT_TIMEOUT 1500
