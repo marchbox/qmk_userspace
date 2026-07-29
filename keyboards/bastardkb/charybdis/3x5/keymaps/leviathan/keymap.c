@@ -44,6 +44,10 @@ enum charybdis_keymap_layers {
 
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
+void keyboard_post_init_user(void) {
+    set_auto_mouse_enable(true);
+}
+
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
 #    define DPI_MOD KC_NO
@@ -54,12 +58,12 @@ enum charybdis_keymap_layers {
 // clang-format off
 
 // Symbols
-#define LDQT  RALT(KC_LBRC)
-#define RDQT  RSA(KC_LBRC)
-#define LSQT  RALT(KC_RBRC)
-#define RSQT  RSA(KC_RBRC)
-#define NDASH RALT(KC_MINS)
-#define MDASH RSA(KC_MINS)
+#define LDQT RALT(KC_LBRC)
+#define RDQT RSA(KC_LBRC)
+#define LSQT RALT(KC_RBRC)
+#define RSQT RSA(KC_RBRC)
+#define NDSH RALT(KC_MINS)
+#define MDSH RSA(KC_MINS)
 
 // Home Row Mods
 #define HRML(K1, K2, K3, K4) LSFT_T(K1), LALT_T(K2), LCTL_T(K3), LGUI_T(K4)
