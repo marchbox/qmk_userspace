@@ -41,11 +41,17 @@
 #endif
 #define RGBLIGHT_LED_COUNT 36
 
+/* Tri Layer feature.  Values must match the `charybdis_keymap_layers` enum in
+   keymap.c (config.h can't see the enum).  Consumed by quantum/tri_layer.c. */
+#define TRI_LAYER_LOWER_LAYER  1 // LAYER_SYM
+#define TRI_LAYER_UPPER_LAYER  2 // LAYER_NAV
+#define TRI_LAYER_ADJUST_LAYER 3 // LAYER_FUN
+
 /* Charybdis-specific features. */
 
 #ifdef POINTING_DEVICE_ENABLE
 // Automatically enable the pointer layer when moving the trackball.  See also:
 // - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS`
 // - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD`
-// #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+#    define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #endif // POINTING_DEVICE_ENABLE
