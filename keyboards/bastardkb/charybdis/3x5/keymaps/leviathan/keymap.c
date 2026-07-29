@@ -53,9 +53,6 @@ void keyboard_post_init_user(void) {
     set_auto_mouse_enable(true);
 #endif
 #ifdef POINTING_DEVICE_ENABLE
-    if (!bkpd_get_dragscroll_axis_invert_x()) {
-        bkpd_set_dragscroll_axis_invert_x(true);
-    }
     if (!bkpd_get_dragscroll_axis_invert_y()) {
         bkpd_set_dragscroll_axis_invert_y(true);
     }
