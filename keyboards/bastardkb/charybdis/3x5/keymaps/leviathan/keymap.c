@@ -16,6 +16,10 @@
  */
 #include QMK_KEYBOARD_H
 
+#ifdef POINTING_DEVICE_ENABLE
+#    include "bk_pointing_device.h"
+#endif
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #    include "timer.h"
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
@@ -27,25 +31,6 @@ enum charybdis_keymap_layers {
     LAYER_FUN,
     LAYER_RAT,
 };
-
-#define DRAG_SCROLL_DIVISOR 6
-
-static bool    drag_scroll_enabled;
-static int16_t drag_scroll_x;
-static int16_t drag_scroll_y;
-
-static int8_t consume_drag_scroll_axis(int16_t *accumulator) {
-    int16_t steps = *accumulator / DRAG_SCROLL_DIVISOR;
-
-    if (steps > INT8_MAX) {
-        steps = INT8_MAX;
-    } else if (steps < INT8_MIN) {
-        steps = INT8_MIN;
-    }
-
-    *accumulator -= steps * DRAG_SCROLL_DIVISOR;
-    return (int8_t)steps;
-}
 
 // Automatically enable sniping-mode on the pointer layer.
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAT
@@ -67,28 +52,14 @@ void keyboard_post_init_user(void) {
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
     set_auto_mouse_enable(true);
 #endif
-}
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (keycode == DRGSCRL) {
-        drag_scroll_enabled = record->event.pressed;
-        drag_scroll_x       = 0;
-        drag_scroll_y       = 0;
-        return false;
+#ifdef POINTING_DEVICE_ENABLE
+    if (!bkpd_get_dragscroll_axis_invert_x()) {
+        bkpd_set_dragscroll_axis_invert_x(true);
     }
-    return true;
-}
-
-report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    if (drag_scroll_enabled) {
-        drag_scroll_x -= mouse_report.x;
-        drag_scroll_y -= mouse_report.y;
-        mouse_report.x = 0;
-        mouse_report.y = 0;
-        mouse_report.h = consume_drag_scroll_axis(&drag_scroll_x);
-        mouse_report.v = consume_drag_scroll_axis(&drag_scroll_y);
+    if (!bkpd_get_dragscroll_axis_invert_y()) {
+        bkpd_set_dragscroll_axis_invert_y(true);
     }
-    return mouse_report;
+#endif
 }
 
 // Keep the auto-mouse layer active while drag-scrolling.
