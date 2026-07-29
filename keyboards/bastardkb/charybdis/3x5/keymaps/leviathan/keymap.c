@@ -16,6 +16,10 @@
  */
 #include QMK_KEYBOARD_H
 
+#ifdef POINTING_DEVICE_ENABLE
+#    include "bk_pointing_device.h"
+#endif
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #    include "timer.h"
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
@@ -45,20 +49,30 @@ enum charybdis_keymap_layers {
 
 // Enable auto pointer
 void keyboard_post_init_user(void) {
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
     set_auto_mouse_enable(true);
+#endif
+#ifdef POINTING_DEVICE_ENABLE
+    if (!bkpd_get_dragscroll_axis_invert_x()) {
+        bkpd_set_dragscroll_axis_invert_x(true);
+    }
+    if (!bkpd_get_dragscroll_axis_invert_y()) {
+        bkpd_set_dragscroll_axis_invert_y(true);
+    }
+#endif
 }
-
-// Enable tri layer
-layer_state_t layer_state_set_user(layer_state_t state) {
-    return update_tri_layer_state(state, LAYER_SYM, LAYER_NAV, LAYER_FUN);
-}
-
+// Mark DRGSCRL as a mouse key
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
     (void)record;
     return keycode == DRGSCRL;
 }
 #endif
+
+// Enable tri layer
+layer_state_t layer_state_set_user(layer_state_t state) {
+    return update_tri_layer_state(state, LAYER_SYM, LAYER_NAV, LAYER_FUN);
+}
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
