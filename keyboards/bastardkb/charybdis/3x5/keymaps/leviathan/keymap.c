@@ -51,20 +51,24 @@ static uint16_t auto_pointer_layer_timer = 0;
 #    define SNIPING KC_NO
 #endif // !POINTING_DEVICE_ENABLE
 
+// clang-format off
+
 // Symbols
 #define LDQT  RALT(KC_LBRC)
-#define RDQT  RSA(KC_LBRC))
+#define RDQT  RSA(KC_LBRC)
 #define LSQT  RALT(KC_RBRC)
-#define RSQT  RSA(KC_RBRC))
+#define RSQT  RSA(KC_RBRC)
 #define NDASH RALT(KC_MINS)
-#define MDASH RSA(KC_MINS))
+#define MDASH RSA(KC_MINS)
 
 // Home Row Mods
-# define HRML(K1, K2, K3, K4) LSFT_T(K1), LALT_T(K2), LCTL_T(K3), LGUI_T(K4)
-# define HRMR(K1, K2, K3, K4) RGUI_T(K1), RGTL_T(K2), RALT_T(K3), RSFT_T(K4)
+#define HRML(K1, K2, K3, K4) LSFT_T(K1), LALT_T(K2), LCTL_T(K3), LGUI_T(K4)
+#define HRMR(K1, K2, K3, K4) RGUI_T(K1), RCTL_T(K2), RALT_T(K3), RSFT_T(K4)
+
+#define LAYOUT_wrapper(...) LAYOUT(__VA_ARGS__)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [LAYER_DEF] = LAYOUT(
+  [LAYER_DEF] = LAYOUT_wrapper(
     // row 1
     KC_Q, KC_W, KC_F, KC_P, KC_B,
     KC_J, KC_L, KC_U, KC_Y, KC_MINS,
@@ -76,9 +80,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_K, KC_H, KC_COMM, KC_DOT, RSQT,
     // thumbs
     OS_LGUI, LT(LAYER_SYM, KC_SPC), OS_LSFT,
-    OS_RCTL, LT(LAYER_NAV, KC_BSPC)
+    OS_RCTL, LT(LAYER_NAV, KC_BSPC),
   ),
-  [LAYER_SYM] = LAYOUT(
+  [LAYER_SYM] = LAYOUT_wrapper(
     // row 1
     KC_1, KC_2, KC_3, KC_4, KC_5,
     KC_6, KC_7, KC_8, KC_9, KC_0,
@@ -90,9 +94,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     // thumbs
     KC_TRANS, KC_TRANS, KC_TRANS,
-    KC_TRANS, KC_TRANS
+    KC_TRANS, KC_TRANS,
   ),
-  [LAYER_NAV] = LAYOUT(
+  [LAYER_NAV] = LAYOUT_wrapper(
     // row 1
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
@@ -104,9 +108,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     // thumbs
     KC_TRANS, KC_TRANS, KC_TRANS,
-    KC_TRANS, KC_TRANS
+    KC_TRANS, KC_TRANS,
   ),
-  [LAYER_FUN] = LAYOUT(
+  [LAYER_FUN] = LAYOUT_wrapper(
     // row 1
     KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,
     KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,
@@ -118,9 +122,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     QK_BOOT, KC_NO, KC_NO, KC_NO, KC_NO,
     // thumbs
     KC_TRANS, KC_TRANS, KC_TRANS,
-    KC_TRANS, KC_TRANS
+    KC_TRANS, KC_TRANS,
   ),
-  [LAYER_RAT] = LAYOUT(
+  [LAYER_RAT] = LAYOUT_wrapper(
     // row 1
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
@@ -132,7 +136,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO, MS_BTN1, MS_BTN2, DRGSCRL, KC_NO,
     // thumbs
     KC_TRANS, KC_TRANS, KC_TRANS,
-    KC_TRANS, KC_TRANS
+    KC_TRANS, KC_TRANS,
   ),
 };
 
