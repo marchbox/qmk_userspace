@@ -93,8 +93,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     // thumbs
-    KC_TRANS, KC_TRANS, KC_TRANS,
-    KC_TRANS, KC_TRANS
+    KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
   [LAYER_NAV] = LAYOUT_wrapper(
     // row 1
@@ -107,8 +107,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     // thumbs
-    KC_TRANS, KC_TRANS, KC_TRANS,
-    KC_TRANS, KC_TRANS
+    KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
   [LAYER_FUN] = LAYOUT_wrapper(
     // row 1
@@ -121,22 +121,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO, KC_NO, KC_NO, KC_NO, QK_BOOT,
     QK_BOOT, KC_NO, KC_NO, KC_NO, KC_NO,
     // thumbs
-    KC_TRANS, KC_TRANS, KC_TRANS,
-    KC_TRANS, KC_TRANS
+    KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
   [LAYER_RAT] = LAYOUT_wrapper(
     // row 1
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     // row 2
-    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+    KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_NO,
+    KC_NO, OS_RGUI, OS_RCTL, OS_RALT, OS_RSFT,
     // row 3
     KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
     KC_NO, MS_BTN1, MS_BTN2, DRGSCRL, KC_NO,
     // thumbs
-    KC_TRANS, KC_TRANS, KC_TRANS,
-    KC_TRANS, KC_TRANS
+    KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
 };
 
