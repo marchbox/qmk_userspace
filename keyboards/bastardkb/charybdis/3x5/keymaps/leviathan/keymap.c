@@ -286,22 +286,3 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
     uint8_t  active_layer   = get_highest_layer(layer_state | default_layer_state);
     return allowed_layers & COMBO_LAYER_MASK(active_layer);
 }
-
-uint16_t get_combo_term(uint16_t combo_index, combo_t *combo) {
-    (void)combo;
-
-    switch (combo_index) {
-        case CMB_SPACE_LEFT:
-        case CMB_SPACE_RIGHT:
-            return 30;
-        case CMB_ESC:
-        case CMB_DEL:
-        case CMB_TAB:
-        case CMB_BSPC:
-        case CMB_ENTER:
-        case CMB_CAPS_WORD:
-            return 20;
-        default:
-            return 50;
-    }
-}
