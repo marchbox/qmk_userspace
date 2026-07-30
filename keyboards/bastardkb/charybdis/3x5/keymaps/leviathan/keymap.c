@@ -47,19 +47,16 @@ enum charybdis_keymap_layers {
 
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
-// Enable auto pointer
 void keyboard_post_init_user(void) {
-#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+    // Enable auto pointer
     set_auto_mouse_enable(true);
-#endif
-#ifdef POINTING_DEVICE_ENABLE
+    // Inverse scrolling
     if (!bkpd_get_dragscroll_axis_invert_x()) {
         bkpd_set_dragscroll_axis_invert_x(true);
     }
     if (!bkpd_get_dragscroll_axis_invert_y()) {
         bkpd_set_dragscroll_axis_invert_y(true);
     }
-#endif
 }
 
 // Keep the auto-mouse layer active while drag-scrolling.
