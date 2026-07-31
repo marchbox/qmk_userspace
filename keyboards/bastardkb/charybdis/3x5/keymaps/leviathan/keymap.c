@@ -49,9 +49,6 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_SCRSHOT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_screenshot_finished, NULL),
 };
 
-// Automatically enable sniping-mode on the pointer layer.
-#define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAT
-
 void keyboard_post_init_user(void) {
     // Enable auto pointer
     set_auto_mouse_enable(true);
@@ -189,7 +186,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,
         // row 2
         KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_F11,
-        KC_F12, KC_VOLD, KC_MUTE, KC_VOLU, KC_NO,
+        KC_F12, HRMR(KC_VOLD, KC_MUTE, KC_VOLU, KC_NO),
         // row 3
         QK_BOOT, KC_NO, KC_NO, KC_NO, KC_NO,
         KC_NO, KC_MPRV, KC_MPLY, KC_MNXT, QK_BOOT,
