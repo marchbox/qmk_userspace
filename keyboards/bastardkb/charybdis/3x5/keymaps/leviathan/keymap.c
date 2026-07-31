@@ -84,6 +84,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 typedef struct {
     uint16_t tap_hold_keycode; // The LT()/MT() keycode as it appears in the keymap
     uint16_t tap_keycode;      // The keycode to emit on tap
+    uint16_t shifted_keycode;  // Optional: emitted instead when shift is held (0 = none)
 } tap_hold_override_t;
 
 // clang-format off
@@ -101,13 +102,14 @@ typedef struct {
 #define HRMR(K1, K2, K3, K4) RGUI_T(K1), RCTL_T(K2), RALT_T(K3), RSFT_T(K4)
 
 static const tap_hold_override_t tap_hold_overrides[] = {
-    {LT(LAYER_RAT, RSQT), RSQT},
-    {LALT_T(KC_PLUS),     KC_PLUS},
-    {LGUI_T(KC_DQT),      KC_DQT},
-    {RGUI_T(KC_LPRN),     KC_LPRN},
-    {RCTL_T(KC_RPRN),     KC_RPRN},
-    {RALT_T(KC_LT),       KC_LT},
-    {RSFT_T(KC_GT),       KC_GT},
+    {LT(LAYER_RAT, RSQT), RSQT,     0},
+    {LALT_T(KC_PLUS),     KC_PLUS,  0},
+    {LCTL_T(KC_EQL),      KC_EQL,   KC_PERC},
+    {LGUI_T(KC_DQT),      KC_DQT,   KC_SQT},
+    {RGUI_T(KC_LPRN),     KC_LPRN,  0},
+    {RCTL_T(KC_RPRN),     KC_RPRN,  KC_AT},
+    {RALT_T(KC_LT),       KC_LT,    0},
+    {RSFT_T(KC_GT),       KC_GT,    0},
 };
 
 // clang-format on
@@ -124,7 +126,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     for (uint8_t i = 0; i < ARRAY_SIZE(tap_hold_overrides); i++) {
         if (keycode == tap_hold_overrides[i].tap_hold_keycode) {
             if (record->tap.count && record->event.pressed) {
-                tap_code16(tap_hold_overrides[i].tap_keycode);
+                uint16_t shifted = tap_hold_overrides[i].shifted_keycode;
+                if (shifted && (get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT) {
+                    uint8_t saved_mods    = get_mods();
+                    uint8_t saved_os_mods = get_oneshot_mods();
+                    del_mods(MOD_MASK_SHIFT);
+                    del_oneshot_mods(MOD_MASK_SHIFT);
+                    tap_code16(shifted);
+                    set_mods(saved_mods);
+                    set_oneshot_mods(saved_os_mods);
+                } else {
+                    tap_code16(tap_hold_overrides[i].tap_keycode);
+                }
                 return false;
             }
             break;
