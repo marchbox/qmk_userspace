@@ -79,6 +79,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #    define SNIPING KC_NO
 #endif // !POINTING_DEVICE_ENABLE
 
+typedef struct {
+    uint16_t tap_hold_keycode; // The LT()/MT() keycode as it appears in the keymap
+    uint16_t tap_keycode;      // The keycode to emit on tap
+} tap_hold_override_t;
+
 // clang-format off
 
 // Symbols
@@ -93,79 +98,106 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #define HRML(K1, K2, K3, K4) LSFT_T(K1), LALT_T(K2), LCTL_T(K3), LGUI_T(K4)
 #define HRMR(K1, K2, K3, K4) RGUI_T(K1), RCTL_T(K2), RALT_T(K3), RSFT_T(K4)
 
+static const tap_hold_override_t tap_hold_overrides[] = {
+    {LT(LAYER_RAT, RSQT), RSQT},
+    {LALT_T(KC_PLUS),     KC_PLUS},
+    {LGUI_T(KC_DQT),      KC_DQT},
+    {RGUI_T(KC_LPRN),     KC_LPRN},
+    {RCTL_T(KC_RPRN),     KC_RPRN},
+    {RALT_T(KC_LT),       KC_LT},
+    {RSFT_T(KC_GT),       KC_GT},
+};
+
+// clang-format on
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    for (uint8_t i = 0; i < ARRAY_SIZE(tap_hold_overrides); i++) {
+        if (keycode == tap_hold_overrides[i].tap_hold_keycode) {
+            if (record->tap.count && record->event.pressed) {
+                tap_code16(tap_hold_overrides[i].tap_keycode);
+                return false;
+            }
+            break;
+        }
+    }
+    return true;
+}
+
+// clang-format off
+
 #define LAYOUT_wrapper(...) LAYOUT(__VA_ARGS__)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [LAYER_DEF] = LAYOUT_wrapper(
-    // row 1
-    KC_Q, KC_W, KC_F, KC_P, KC_B,
-    KC_J, KC_L, KC_U, KC_Y, KC_MINS,
-    // row 2
-    HRML(KC_A, KC_R, KC_S, KC_T), KC_G,
-    KC_M, HRMR(KC_N, KC_E, KC_I, KC_O),
-    // row 3
-    LT(LAYER_RAT, KC_Z), KC_X, KC_C, KC_D, KC_V,
-    KC_K, KC_H, KC_COMM, KC_DOT, RSQT,
-    // thumbs
-    OS_LGUI, LT(LAYER_SYM, KC_SPC), OS_LSFT,
-    OS_RCTL, LT(LAYER_NAV, KC_BSPC)
-  ),
-  [LAYER_SYM] = LAYOUT_wrapper(
-    // row 1
-    KC_1, KC_2, KC_3, KC_4, KC_5,
-    KC_6, KC_7, KC_8, KC_9, KC_0,
-    // row 2
-    HRML(KC_MINS, KC_PLUS, KC_EQL, KC_DQT), KC_COLN,
-    KC_SCLN, HRMR(KC_LPRN, KC_RPRN, KC_LT, KC_GT),
-    // row 3
-    KC_ASTR, KC_DLR, KC_AMPR, KC_EXLM, KC_GRV,
-    KC_SLSH, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC,
-    // thumbs
-    KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
-  ),
-  [LAYER_NAV] = LAYOUT_wrapper(
-    // row 1
-    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-    KC_NO, KC_PGDN, KC_PGUP, KC_NO, KC_NO,
-    // row 2
-    KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_NO,
-    KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_NO,
-    // row 3
-    G(KC_Z), G(KC_X), G(KC_C), G(KC_V), LSAG(KC_V),
-    KC_NO, KC_END, KC_HOME, KC_NO, KC_NO,
-    // thumbs
-    KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
-  ),
-  [LAYER_FUN] = LAYOUT_wrapper(
-    // row 1
-    KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,
-    KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,
-    // row 2
-    KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_F11,
-    KC_F12, KC_VOLD, KC_MUTE, KC_VOLU, KC_NO,
-    // row 3
-    QK_BOOT, KC_NO, KC_NO, KC_NO, KC_NO,
-    KC_NO, KC_MPRV, KC_MPLY, KC_MNXT, QK_BOOT,
-    // thumbs
-    KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
-  ),
-  [LAYER_RAT] = LAYOUT_wrapper(
-    // row 1
-    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-    // row 2
-    KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_NO,
-    KC_NO, OS_RGUI, OS_RCTL, OS_RALT, OS_RSFT,
-    // row 3
-    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-    KC_NO, MS_BTN1, MS_BTN2, DRGSCRL, KC_NO,
-    // thumbs
-    KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
-  ),
+    [LAYER_DEF] = LAYOUT_wrapper(
+        // row 1
+        KC_Q, KC_W, KC_F, KC_P, KC_B,
+        KC_J, KC_L, KC_U, KC_Y, KC_MINS,
+        // row 2
+        HRML(KC_A, KC_R, KC_S, KC_T), KC_G,
+        KC_M, HRMR(KC_N, KC_E, KC_I, KC_O),
+        // row 3
+        LT(LAYER_RAT, KC_Z), KC_X, KC_C, KC_D, KC_V,
+        KC_K, KC_H, KC_COMM, KC_DOT, LT(LAYER_RAT, RSQT),
+        // thumbs
+        OS_LGUI, LT(LAYER_SYM, KC_SPC), OS_LSFT,
+        OS_RCTL, LT(LAYER_NAV, KC_BSPC)
+    ),
+    [LAYER_SYM] = LAYOUT_wrapper(
+        // row 1
+        KC_1, KC_2, KC_3, KC_4, KC_5,
+        KC_6, KC_7, KC_8, KC_9, KC_0,
+        // row 2
+        HRML(KC_MINS, KC_PLUS, KC_EQL, KC_DQT), KC_COLN,
+        KC_SCLN, HRMR(KC_LPRN, KC_RPRN, KC_LT, KC_GT),
+        // row 3
+        KC_ASTR, KC_DLR, KC_AMPR, KC_EXLM, KC_GRV,
+        KC_SLSH, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC,
+        // thumbs
+        KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS
+    ),
+    [LAYER_NAV] = LAYOUT_wrapper(
+        // row 1
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_PGDN, KC_PGUP, KC_NO, KC_NO,
+        // row 2
+        KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_NO,
+        KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_NO,
+        // row 3
+        G(KC_Z), G(KC_X), G(KC_C), G(KC_V), LSAG(KC_V),
+        KC_NO, KC_END, KC_HOME, KC_NO, KC_NO,
+        // thumbs
+        KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS
+    ),
+    [LAYER_FUN] = LAYOUT_wrapper(
+        // row 1
+        KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,
+        KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,
+        // row 2
+        KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_F11,
+        KC_F12, KC_VOLD, KC_MUTE, KC_VOLU, KC_NO,
+        // row 3
+        QK_BOOT, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_MPRV, KC_MPLY, KC_MNXT, QK_BOOT,
+        // thumbs
+        KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS
+    ),
+    [LAYER_RAT] = LAYOUT_wrapper(
+        // row 1
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        // row 2
+        KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_NO,
+        KC_NO, OS_RGUI, OS_RCTL, OS_RALT, OS_RSFT,
+        // row 3
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, MS_BTN1, MS_BTN2, DRGSCRL, KC_NO,
+        // thumbs
+        KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS
+    ),
 };
 
 const uint16_t PROGMEM combo_def_1_2[] = {KC_W, KC_F, COMBO_END};
