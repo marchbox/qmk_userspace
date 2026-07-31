@@ -105,7 +105,7 @@ static const tap_hold_override_t tap_hold_overrides[] = {
     {LT(LAYER_RAT, RSQT), RSQT,     0},
     {LALT_T(KC_PLUS),     KC_PLUS,  0},
     {LCTL_T(KC_EQL),      KC_EQL,   KC_PERC},
-    {LGUI_T(KC_DQT),      KC_DQT,   KC_SQT},
+    {LGUI_T(KC_DQT),      KC_DQT,   KC_QUOT},
     {RGUI_T(KC_LPRN),     KC_LPRN,  0},
     {RCTL_T(KC_RPRN),     KC_RPRN,  KC_AT},
     {RALT_T(KC_LT),       KC_LT,    0},
@@ -241,6 +241,8 @@ const uint16_t PROGMEM combo_def_26_27_28[] = {KC_H, KC_COMM, KC_DOT, COMBO_END}
 const uint16_t PROGMEM combo_sym_26_27_28[] = {KC_LCBR, KC_RCBR, KC_LBRC, COMBO_END};
 const uint16_t PROGMEM combo_def_0_1_2_3[] = {KC_Q, KC_W, KC_F, KC_P, COMBO_END};
 const uint16_t PROGMEM combo_def_6_7_8_9[] = {KC_L, KC_U, KC_Y, KC_MINS, COMBO_END};
+const uint16_t PROGMEM combo_def_20_21_22_23[] = {LT(LAYER_RAT, KC_Z), KC_X, KC_C, KC_D, COMBO_END};
+const uint16_t PROGMEM combo_def_26_27_28_29[] = {KC_H, KC_COMM, KC_DOT, LT(LAYER_RAT, RSQT), COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(combo_def_1_2, KC_ESC),
@@ -255,6 +257,8 @@ combo_t key_combos[] = {
     COMBO(combo_sym_17_18, KC_BSPC),
     COMBO(combo_def_27_28, KC_ENT),
     COMBO(combo_sym_27_28, KC_ENT),
+    COMBO(combo_def_20_21_22_23, G(KC_SPC)),
+    COMBO(combo_def_26_27_28_29, KC_MUTE),
     COMBO(combo_def_21_22_23, KC_SPC),
     COMBO(combo_sym_21_22_23, KC_SPC),
     COMBO(combo_def_26_27_28, KC_SPC),
