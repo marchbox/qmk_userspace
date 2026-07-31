@@ -20,10 +20,6 @@
 #    include "bk_pointing_device.h"
 #endif
 
-#ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
-#    include "timer.h"
-#endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
-
 enum charybdis_keymap_layers {
     LAYER_DEF = 0,
     LAYER_SYM,
@@ -37,7 +33,7 @@ enum custom_keycodes {
 };
 
 enum tap_dance_actions {
-    TD_SCRSHOT = 0, // Tap: Cmd+Ctrl+Shift+4 (clipboard). Double-tap: Cmd+Shift+5 (options).
+    TD_SCRSHOT, // Tap: Cmd+Ctrl+Shift+4 (clipboard). Double-tap: Cmd+Shift+5 (options).
 };
 
 // Tap dance: screenshot (custom fn so we can send modded keycodes).
@@ -55,18 +51,6 @@ tap_dance_action_t tap_dance_actions[] = {
 
 // Automatically enable sniping-mode on the pointer layer.
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAT
-
-#ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
-
-#    ifndef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS
-#        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000
-#    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS
-
-#    ifndef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
-#        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD 8
-#    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
-
-#endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
 void keyboard_post_init_user(void) {
     // Enable auto pointer
