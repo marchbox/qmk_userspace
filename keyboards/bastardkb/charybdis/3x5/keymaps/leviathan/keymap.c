@@ -250,4 +250,43 @@ combo_t key_combos[] = {
     COMBO(combo_def_6_7_8_9, TD(TD_SCRSHOT)),
 };
 
+const key_override_t ko_comm_ques = ko_make_basic(MOD_MASK_SHIFT, KC_COMM, KC_QUES);
+const key_override_t ko_dot_exlm = ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_EXLM);
+const key_override_t ko_rsqt_ndsh = ko_make_basic(MOD_MASK_SHIFT, RSQT, NDSH);
+const key_override_t ko_eql_perc = ko_make_basic(MOD_MASK_SHIFT, KC_EQL, KC_PERC);
+const key_override_t ko_dqt_quot = ko_make_basic(MOD_MASK_SHIFT, KC_DQT, KC_QUOT);
+const key_override_t ko_coln_dot = ko_make_basic(MOD_MASK_SHIFT, KC_COLN, KC_DOT);
+const key_override_t ko_astr_circ = ko_make_basic(MOD_MASK_SHIFT, KC_ASTR, KC_CIRC);
+const key_override_t ko_dlr_hash = ko_make_basic(MOD_MASK_SHIFT, KC_DLR, KC_HASH);
+const key_override_t ko_ampr_pipe = ko_make_basic(MOD_MASK_SHIFT, KC_AMPR, KC_PIPE);
+const key_override_t ko_exlm_ques = ko_make_basic(MOD_MASK_SHIFT, KC_EXLM, KC_QUES);
+const key_override_t ko_scln_comm = ko_make_basic(MOD_MASK_SHIFT, KC_SCLN, KC_COMM);
+const key_override_t ko_rprn_at = ko_make_basic(MOD_MASK_SHIFT, KC_RPRN, KC_AT);
+const key_override_t ko_slsh_bsls = ko_make_basic(MOD_MASK_SHIFT, KC_SLSH, KC_BSLS);
+const key_override_t ko_lcbr_ldqt = ko_make_basic(MOD_MASK_SHIFT, KC_LCBR, LDQT);
+const key_override_t ko_rcbr_rdqt = ko_make_basic(MOD_MASK_SHIFT, KC_RCBR, RDQT);
+const key_override_t ko_lbrc_lsqt = ko_make_basic(MOD_MASK_SHIFT, KC_LBRC, LSQT);
+const key_override_t ko_rbrc_rsqt = ko_make_basic(MOD_MASK_SHIFT, KC_RBRC, RSQT);
+
+// This globally defines all key overrides to be used
+const key_override_t *key_overrides[] = {
+    &ko_comm_ques,
+    &ko_dot_exlm,
+    &ko_rsqt_ndsh,
+    &ko_eql_perc,
+    &ko_dqt_quot,
+    &ko_coln_dot,
+    &ko_astr_circ,
+    &ko_dlr_hash,
+    &ko_ampr_pipe,
+    &ko_exlm_ques,
+    &ko_scln_comm,
+    &ko_rprn_at,
+    &ko_slsh_bsls,
+    &ko_lcbr_ldqt,
+    &ko_rcbr_rdqt,
+    &ko_lbrc_lsqt,
+    &ko_rbrc_rsqt,
+};
+
 // clang-format on
