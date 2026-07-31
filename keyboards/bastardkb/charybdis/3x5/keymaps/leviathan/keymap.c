@@ -32,6 +32,27 @@ enum charybdis_keymap_layers {
     LAYER_RAT,
 };
 
+enum custom_keycodes {
+    NO_CHEESE = SAFE_RANGE, // Sleep on macOS: Ctrl+Cmd+Q, wait, Esc
+};
+
+enum tap_dance_actions {
+    TD_SCRSHOT = 0, // Tap: Cmd+Ctrl+Shift+4 (clipboard). Double-tap: Cmd+Shift+5 (options).
+};
+
+// Tap dance: screenshot (custom fn so we can send modded keycodes).
+static void td_screenshot_finished(tap_dance_state_t *state, void *user_data) {
+    if (state->count >= 2) {
+        tap_code16(LSG(KC_5));
+    } else {
+        tap_code16(LCS(LGUI(KC_4)));
+    }
+}
+
+tap_dance_action_t tap_dance_actions[] = {
+    [TD_SCRSHOT] = ACTION_TAP_DANCE_ON_EACH_TAP_FN(NULL, td_screenshot_finished, NULL),
+};
+
 // Automatically enable sniping-mode on the pointer layer.
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAT
 
@@ -111,6 +132,14 @@ static const tap_hold_override_t tap_hold_overrides[] = {
 // clang-format on
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == NO_CHEESE) {
+        if (record->event.pressed) {
+            tap_code16(LCTL(LGUI(KC_Q)));
+            wait_ms(1000);
+            tap_code(KC_ESC);
+        }
+        return false;
+    }
     for (uint8_t i = 0; i < ARRAY_SIZE(tap_hold_overrides); i++) {
         if (keycode == tap_hold_overrides[i].tap_hold_keycode) {
             if (record->tap.count && record->event.pressed) {
@@ -238,6 +267,8 @@ combo_t key_combos[] = {
     COMBO(combo_sym_21_22_23, KC_SPC),
     COMBO(combo_def_26_27_28, KC_SPC),
     COMBO(combo_sym_26_27_28, KC_SPC),
+    COMBO(combo_def_0_1_2_3, NO_CHEESE),
+    COMBO(combo_def_6_7_8_9, TD(TD_SCRSHOT)),
     COMBO(combo_def_20_21_22_23, G(KC_SPC)),
     COMBO(combo_def_26_27_28_29, KC_MUTE),
 };
