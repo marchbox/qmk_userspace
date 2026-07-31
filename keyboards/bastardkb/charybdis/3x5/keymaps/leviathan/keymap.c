@@ -22,10 +22,10 @@
 
 enum charybdis_keymap_layers {
     LAYER_DEF = 0,
+    LAYER_RAT,
     LAYER_SYM,
     LAYER_NAV,
     LAYER_FUN,
-    LAYER_RAT,
 };
 
 enum custom_keycodes {
@@ -53,9 +53,9 @@ void keyboard_post_init_user(void) {
     // Enable auto pointer
     set_auto_mouse_enable(true);
     // Inverse scrolling
-    if (!bkpd_get_dragscroll_axis_invert_x()) {
-        bkpd_set_dragscroll_axis_invert_x(true);
-    }
+    // if (!bkpd_get_dragscroll_axis_invert_x()) {
+    //     bkpd_set_dragscroll_axis_invert_x(true);
+    // }
     if (!bkpd_get_dragscroll_axis_invert_y()) {
         bkpd_set_dragscroll_axis_invert_y(true);
     }
@@ -165,6 +165,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         OS_LGUI, LT(LAYER_SYM, KC_SPC), OS_LSFT,
         OS_RCTL, LT(LAYER_NAV, KC_BSPC)
     ),
+    [LAYER_RAT] = LAYOUT_wrapper(
+        // row 1
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        // row 2
+        KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_TRNS,
+        KC_TRNS, OS_RGUI, OS_RCTL, OS_RALT, OS_RSFT,
+        // row 3
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, MS_BTN1, MS_BTN2, DRGSCRL, KC_TRNS,
+        // thumbs
+        KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS
+    ),
     [LAYER_SYM] = LAYOUT_wrapper(
         // row 1
         KC_1, KC_2, KC_3, KC_4, KC_5,
@@ -203,20 +217,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         // row 3
         QK_BOOT, KC_NO, KC_NO, KC_NO, KC_NO,
         KC_NO, KC_MPRV, KC_MPLY, KC_MNXT, QK_BOOT,
-        // thumbs
-        KC_TRNS, KC_TRNS, KC_TRNS,
-        KC_TRNS, KC_TRNS
-    ),
-    [LAYER_RAT] = LAYOUT_wrapper(
-        // row 1
-        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-        // row 2
-        KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_NO,
-        KC_NO, OS_RGUI, OS_RCTL, OS_RALT, OS_RSFT,
-        // row 3
-        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-        KC_NO, MS_BTN1, MS_BTN2, DRGSCRL, KC_NO,
         // thumbs
         KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS
