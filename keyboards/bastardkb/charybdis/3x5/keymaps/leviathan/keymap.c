@@ -50,7 +50,7 @@ static void td_screenshot_finished(tap_dance_state_t *state, void *user_data) {
 }
 
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_SCRSHOT] = ACTION_TAP_DANCE_ON_EACH_TAP_FN(NULL, td_screenshot_finished, NULL),
+    [TD_SCRSHOT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_screenshot_finished, NULL),
 };
 
 // Automatically enable sniping-mode on the pointer layer.
