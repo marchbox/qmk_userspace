@@ -231,14 +231,8 @@ const uint16_t PROGMEM combo_def_26_27_28[] = {KC_H, KC_COMM, KC_DOT, COMBO_END}
 const uint16_t PROGMEM combo_sym_26_27_28[] = {KC_LCBR, KC_RCBR, KC_LBRC, COMBO_END};
 const uint16_t PROGMEM combo_def_0_1_2_3[] = {KC_Q, KC_W, KC_F, KC_P, COMBO_END};
 const uint16_t PROGMEM combo_def_6_7_8_9[] = {KC_L, KC_U, KC_Y, KC_MINS, COMBO_END};
-const uint16_t PROGMEM combo_def_20_21_22_23[] = {LT(LAYER_RAT, KC_Z), KC_X, KC_C, KC_D, COMBO_END};
-const uint16_t PROGMEM combo_def_26_27_28_29[] = {KC_H, KC_COMM, KC_DOT, LT(LAYER_RAT, RSQT), COMBO_END};
 
 combo_t key_combos[] = {
-    COMBO(combo_def_0_1_2_3, NO_CHEESE),
-    COMBO(combo_def_6_7_8_9, TD(TD_SCRSHOT)),
-    COMBO(combo_def_20_21_22_23, G(KC_SPC)),
-    COMBO(combo_def_26_27_28_29, KC_MUTE),
     COMBO(combo_def_1_2, KC_ESC),
     COMBO(combo_sym_1_2, KC_ESC),
     COMBO(combo_def_11_12, KC_TAB),
@@ -255,6 +249,8 @@ combo_t key_combos[] = {
     COMBO(combo_sym_21_22_23, KC_SPC),
     COMBO(combo_def_26_27_28, KC_SPC),
     COMBO(combo_sym_26_27_28, KC_SPC),
+    COMBO(combo_def_0_1_2_3, NO_CHEESE),
+    COMBO(combo_def_6_7_8_9, TD(TD_SCRSHOT)),
 };
 
 // clang-format on
