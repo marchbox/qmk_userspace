@@ -162,7 +162,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         LT(LAYER_RAT, KC_Z), KC_X, KC_C, KC_D, KC_V,
         KC_K, KC_H, KC_COMM, KC_DOT, LT(LAYER_RAT, RSQT),
         // thumbs
-        OS_LGUI, LT(LAYER_SYM, KC_SPC), OS_LSFT,
+        DRGSCRL, LT(LAYER_SYM, KC_SPC), OS_LSFT,
         OS_RCTL, LT(LAYER_NAV, KC_BSPC)
     ),
     [LAYER_RAT] = LAYOUT_wrapper(
