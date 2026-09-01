@@ -50,8 +50,9 @@ tap_dance_action_t tap_dance_actions[] = {
 };
 
 void keyboard_post_init_user(void) {
-    // Enable auto pointer
-    set_auto_mouse_enable(true);
+    if (bkpd_get_auto_mouse_layer_enabled()) {
+        bkpd_set_auto_mouse_layer_enabled(false);
+    }
     // Inverse scrolling
     // if (!bkpd_get_dragscroll_axis_invert_x()) {
     //     bkpd_set_dragscroll_axis_invert_x(true);
@@ -60,14 +61,6 @@ void keyboard_post_init_user(void) {
         bkpd_set_dragscroll_axis_invert_y(true);
     }
 }
-
-// Keep the auto-mouse layer active while drag-scrolling.
-#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
-bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
-    (void)record;
-    return keycode == DRGSCRL;
-}
-#endif
 
 // Enable tri layer
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -161,7 +154,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_Z, KC_X, KC_C, KC_D, KC_V,
         KC_K, KC_H, KC_COMM, KC_DOT, RSQT,
         // thumbs
-        DRGSCRL, LT(LAYER_SYM, KC_SPC), OS_LSFT,
+        MO(LAYER_RAT), LT(LAYER_SYM, KC_SPC), OS_LSFT,
         OS_RCTL, LT(LAYER_NAV, KC_BSPC)
     ),
     [LAYER_RAT] = LAYOUT_wrapper(
@@ -172,7 +165,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         // row 3
-        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, DRGSCRL, KC_TRNS,
         KC_TRNS, MS_BTN1, MS_BTN2, DRGSCRL, KC_TRNS,
         // thumbs
         KC_TRNS, KC_TRNS, KC_TRNS,
