@@ -74,6 +74,7 @@ static const vial_combo_entry_t default_combos[] = {
     {{KC_LCBR, KC_RCBR, KC_LBRC}, KC_SPC},
     {{KC_Q, KC_W, KC_F, KC_P}, QK_MACRO_0},
     {{KC_L, KC_U, KC_Y, KC_MINS}, TD(0)},
+    {{KC_F1, KC_F2, KC_F3, KC_F4}, QK_BOOT},
 };
 
 #define SHIFT_OVERRIDE(trigger_, replacement_) \

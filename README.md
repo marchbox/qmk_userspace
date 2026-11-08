@@ -58,6 +58,10 @@ in Vial. Holding layers 1 and 2 does not automatically enable layer 3.
 Like the upstream Holykeebs firmware, this build uses insecure Vial mode:
 configuration and matrix testing do not require an unlock combo.
 
+To enter the UF2 bootloader, hold the right inner Backspace/layer-2 thumb
+and press **F1 + F2 + F3 + F4** together (the first four keys of the top
+row on the navigation layer).
+
 Initialize dependencies and clone the correct firmware fork:
 
 ```sh
@@ -83,6 +87,8 @@ connecting or disconnecting TRRS.
 Firmware defaults are loaded when Vial's EEPROM is invalid (including a new
 build). An existing left outer thumb assigned to `TD(1)` is automatically
 migrated to the new Shift/layer-3 key; other Vial edits are preserved.
+If an existing Vial configuration is retained, add the new
+`F1 + F2 + F3 + F4` -> `QK_BOOT` combo in Vial, or restore firmware defaults.
 To restore everything later, use QMK's `QK_CLEAR_EEPROM` keycode,
 which can be assigned in Vial. Vial's keymap-only reset clears dynamic combos
 and tap dances rather than restoring their baked defaults.
