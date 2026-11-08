@@ -1,4 +1,4 @@
-name: Build Sweep Vial firmware
+name: Build Sebastian firmware
 
 on: [push, workflow_dispatch]
 
