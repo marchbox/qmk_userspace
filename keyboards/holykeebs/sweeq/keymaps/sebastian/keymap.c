@@ -43,9 +43,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [3] = LAYOUT_wrapper(
         HK_I_SCROLL, KC_NO, KC_NO, KC_NO, KC_NO,           KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
         HK_D_MODE_T, MS_BTN2, HK_D_MODE, MS_BTN1, HK_S_MODE,
-                                                         QK_LAYER_LOCK, RGUI_T(KC_VOLD), RCTL_T(KC_MUTE), RALT_T(KC_VOLU), KC_RSFT,
-        HK_SAVE, KC_NO, KC_NO, KC_NO, KC_NO,               KC_NO, KC_MPRV, KC_MPLY, KC_MNXT, KC_NO,
-                                    KC_TRNS, KC_TRNS,    KC_TRNS, KC_TRNS
+                                                         HK_D_MODE, RGUI_T(KC_VOLD), RCTL_T(KC_MUTE), RALT_T(KC_VOLU), KC_RSFT,
+        HK_SAVE, KC_NO, KC_NO, KC_NO, QK_LAYER_LOCK,               KC_NO, KC_MPRV, KC_MPLY, KC_MNXT, KC_NO,
+                                    KC_TRNS, KC_TRNS,    MS_BTN1, MS_BTN2
     ),
 };
 
