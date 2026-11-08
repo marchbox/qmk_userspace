@@ -1,0 +1,5 @@
+VIA_ENABLE = yes
+VIAL_ENABLE = yes
+USER_NAME = holykeebs
+POINTING_DEVICE = trackpoint
+POINTING_DEVICE_POSITION = right

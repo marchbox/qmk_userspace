@@ -1,0 +1,41 @@
+name: Build Sweep Vial firmware
+
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/qmk/qmk_cli:latest
+    steps:
+      - name: Checkout userspace
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Checkout Holykeebs Vial firmware
+        uses: actions/checkout@v6
+        with:
+          repository: holykeebs/vial-qmk
+          ref: hk-master
+          path: qmk_firmware
+          submodules: recursive
+
+      - name: Install firmware dependencies
+        run: pip install -r qmk_firmware/requirements.txt
+
+      - name: Build Sweep
+        working-directory: qmk_firmware
+        run: |
+          qmk config user.qmk_home="$GITHUB_WORKSPACE/qmk_firmware"
+          qmk config user.overlay_dir="$GITHUB_WORKSPACE"
+          qmk compile -kb holykeebs/sweeq -km leviathan -j "$(nproc)"
+
+      - name: Upload Sweep firmware
+        uses: actions/upload-artifact@v7
+        with:
+          name: Sweep-Firmware
+          path: holykeebs_sweeq_leviathan.uf2
+          if-no-files-found: error
