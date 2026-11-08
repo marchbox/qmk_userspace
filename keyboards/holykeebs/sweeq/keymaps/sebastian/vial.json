@@ -17,9 +17,9 @@
         {"name": "HK_D_MODE_T", "title": "Toggle drag scrolling", "shortName": "Toggle scroll"},
         {"name": "HK_C_SCROLL", "title": "Cycle scroll lock", "shortName": "Scroll lock"},
         {"name": "HK_I_SCROLL", "title": "Invert scroll direction", "shortName": "Invert scroll"},
-        {"name": "HK_AML_T", "title": "Toggle auto-mouse (not compiled in)", "shortName": "Auto mouse"},
-        {"name": "HK_AML_UP", "title": "Increase auto-mouse timeout (not compiled in)", "shortName": "AML +50"},
-        {"name": "HK_AML_DN", "title": "Decrease auto-mouse timeout (not compiled in)", "shortName": "AML -50"},
+        {"name": "HK_AML_T", "title": "Toggle auto-mouse", "shortName": "Auto mouse"},
+        {"name": "HK_AML_UP", "title": "Increase auto-mouse timeout", "shortName": "AML +50"},
+        {"name": "HK_AML_DN", "title": "Decrease auto-mouse timeout", "shortName": "AML -50"},
         {"name": "HK_BONGO_T", "title": "Toggle OLED animation (not compiled in)", "shortName": "Bongo"},
         {"name": "HK_ENC_SCR_U", "title": "Scroll up one encoder detent", "shortName": "Scroll up"},
         {"name": "HK_ENC_SCR_D", "title": "Scroll down one encoder detent", "shortName": "Scroll down"}

@@ -7,6 +7,7 @@
 #include "qmk_settings.h"
 #include "vial.h"
 #include "via.h"
+#include "pointing_device_auto_mouse.h"
 #include <string.h>
 
 #define LDQT RALT(KC_LBRC)
@@ -24,7 +25,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_Q, KC_W, KC_F, KC_P, KC_B,                      KC_J, KC_L, KC_U, KC_Y, KC_MINS,
         HRML(KC_A, KC_R, KC_S, KC_T), KC_G,                KC_M, HRMR(KC_N, KC_E, KC_I, KC_O),
         KC_Z, KC_X, KC_C, KC_D, KC_V,                      KC_K, KC_H, KC_COMM, KC_DOT, RSQT,
-                                    TD(1), LT(1, KC_SPC), LT(2, KC_BSPC), OSM(MOD_RCTL)
+                                    LT(3, KC_LSFT), LT(1, KC_SPC), LT(2, KC_BSPC), OSM(MOD_RCTL)
     ),
     [1] = LAYOUT_wrapper(
         KC_1, KC_2, KC_3, KC_4, KC_5,                      KC_6, KC_7, KC_8, KC_9, KC_0,
@@ -50,7 +51,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 static const vial_tap_dance_entry_t default_tap_dances[] = {
     {LCTL(LSG(KC_4)), KC_NO, LSG(KC_5), KC_NO, 230},
-    {OSM(MOD_LSFT), MO(3), KC_NO, KC_NO, 150},
 };
 
 static const vial_combo_entry_t default_combos[] = {
@@ -171,6 +171,8 @@ void via_init_kb(void) {
     if (!via_eeprom_is_valid()) {
         eeconfig_init_via();
         restore_vial_defaults();
+    } else if (dynamic_keymap_get_keycode(0, 3, 3) == TD(1)) {
+        dynamic_keymap_set_keycode(0, 3, 3, LT(3, KC_LSFT));
     }
 }
 
@@ -178,7 +180,39 @@ void eeconfig_init_keymap(void) {
     restore_vial_defaults();
 }
 
+void keyboard_post_init_keymap(void) {
+    set_auto_mouse_enable(true);
+    // Older builds saved a zero timeout because auto mouse was not compiled in.
+    if (!get_auto_mouse_timeout()) {
+        set_auto_mouse_timeout(AUTO_MOUSE_TIME);
+    }
+}
+
+bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
+    (void)record;
+    switch (keycode) {
+        case LT(3, KC_LSFT):
+        case HK_D_MODE:
+        case HK_D_MODE_T:
+        case HK_S_MODE:
+        case HK_S_MODE_T:
+        case HK_I_SCROLL:
+        case HK_C_SCROLL:
+            return true;
+        default:
+            return false;
+    }
+}
+
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
+    // LT() cannot encode OSM() in its tap keycode.
+    if (keycode == LT(3, KC_LSFT) && record->tap.count) {
+        if (record->event.pressed) {
+            set_oneshot_mods(get_oneshot_mods() | MOD_LSFT);
+        }
+        return false;
+    }
+
     for (uint8_t i = 0; i < ARRAY_SIZE(tap_hold_overrides); ++i) {
         if (keycode != tap_hold_overrides[i].keycode) {
             continue;
