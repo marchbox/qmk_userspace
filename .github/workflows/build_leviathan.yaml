@@ -1,6 +1,17 @@
 name: Build Leviathan firmware
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'keyboards/bastardkb/charybdis/3x5/keymaps/leviathan/**'
+      - 'modules/bastardkb'
+      - 'modules/bastardkb/**'
+      - 'qmk.json'
+      - '.gitmodules'
+      - '.github/workflows/build_leviathan.yaml'
+      - '.github/workflows/publish_leviathan.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write

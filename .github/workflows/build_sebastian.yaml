@@ -1,6 +1,17 @@
 name: Build Sebastian firmware
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'keyboards/holykeebs/sweeq/keymaps/sebastian/**'
+      - 'modules/holykeebs'
+      - 'modules/holykeebs/**'
+      - 'users/holykeebs'
+      - 'users/holykeebs/**'
+      - '.gitmodules'
+      - '.github/workflows/build_sebastian.yaml'
+  workflow_dispatch:
 
 permissions:
   contents: read

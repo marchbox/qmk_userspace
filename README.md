@@ -90,5 +90,8 @@ and tap dances rather than restoring their baked defaults.
 GitHub Actions builds Leviathan with `build_leviathan.yaml` and publishes
 its numbered releases with `publish_leviathan.yml`. Sebastian is built with
 `build_sebastian.yaml` and downloaded as the `Sebastian-Firmware` artifact.
+Push builds only run when that keyboard's keymap, dependencies, or workflow
+changes. Shared `.gitmodules` changes run both; README-only changes and tag
+pushes run neither. Both builds can still be run manually in Actions.
 Build details:
 [Holykeebs firmware documentation](https://docs.holykeebs.com/firmware/).
