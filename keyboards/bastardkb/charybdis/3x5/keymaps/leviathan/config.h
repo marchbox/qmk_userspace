@@ -16,6 +16,9 @@
  */
 #pragma once
 
+#undef PRODUCT
+#define PRODUCT "Leviathan"
+
 #ifdef VIA_ENABLE
 /* VIA configuration. */
 #    define DYNAMIC_KEYMAP_LAYER_COUNT 7

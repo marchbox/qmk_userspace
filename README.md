@@ -1,12 +1,14 @@
 # QMK Userspace
 
-This userspace contains keymaps for a BastardKB Charybdis Nano and a
-Holykeebs Sweep (`holykeebs/sweeq`). They use separate firmware forks and
-GitHub Actions builds.
+This userspace contains **Leviathan**, a BastardKB Charybdis Nano, and
+**Sebastian**, a Holykeebs Sweep (`holykeebs/sweeq`). They use separate firmware
+forks and GitHub Actions builds.
 
 You can read how to compile your own keymap on the official docs here: [https://docs.bastardkb.com/fw/compile-firmware.html](https://docs.bastardkb.com/fw/compile-firmware.html).
 
-## Charybdis Nano
+## Leviathan (Charybdis Nano)
+
+The `leviathan` keymap identifies the keyboard as **Leviathan** over USB.
 
 The existing `qmk.json` targets and release workflow build against
 `bastardkb/bastardkb-qmk`. Sweep is intentionally not listed there because
@@ -19,13 +21,14 @@ This preserves the existing pointing API, static combos, and tap dances.
 The submodule updater only advances Holykeebs; do not update BastardKB without
 migrating and validating the Charybdis keymap.
 
-Successful Charybdis builds publish numbered releases (`r1`, `r2`, ...),
+Successful Leviathan builds publish numbered releases (`r1`, `r2`, ...),
 following BastardKB's upstream convention. Failed builds do not publish.
 
-## Holykeebs Sweep
+## Sebastian (Holykeebs Sweep)
 
-The `leviathan` keymap builds Vial firmware for a **right-side TrackPoint**,
-without OLED or trackball lighting. The shared Holykeebs userspace is pinned
+The `sebastian` keymap builds Vial firmware for a **right-side TrackPoint**,
+without OLED or trackball lighting, and identifies the keyboard as
+**Sebastian** over USB and in Vial. The shared Holykeebs userspace is pinned
 as `modules/holykeebs` and exposed through `users/holykeebs`.
 
 | Layer | Non-thumb keys |
@@ -59,13 +62,13 @@ Configure QMK to use that checkout and this userspace, then build:
 ```sh
 qmk config user.qmk_home=/path/to/holykeebs-vial-qmk
 qmk config user.overlay_dir="$PWD"
-qmk compile -kb holykeebs/sweeq -km leviathan
+qmk compile -kb holykeebs/sweeq -km sebastian
 ```
 
 These settings are global. Switch `user.qmk_home` back to your BastardKB
 firmware checkout before building Charybdis.
 
-The result is `holykeebs_sweeq_leviathan.uf2`. Flash the **same image to both
+The result is `holykeebs_sweeq_sebastian.uf2`. Flash the **same image to both
 halves**, and connect USB to the **right half**. Disconnect power before
 connecting or disconnecting TRRS.
 
@@ -74,6 +77,8 @@ build). To restore everything later, use QMK's `QK_CLEAR_EEPROM` keycode,
 which can be assigned in Vial. Vial's keymap-only reset clears dynamic combos
 and tap dances rather than restoring their baked defaults.
 
-GitHub Actions provides the Sweep image as the separate `Sweep-Firmware`
-artifact; Charybdis uses its separate numbered releases. Build details:
+GitHub Actions builds Leviathan with `build_leviathan.yaml` and publishes
+its numbered releases with `publish_leviathan.yml`. Sebastian is built with
+`build_sebastian.yaml` and downloaded as the `Sebastian-Firmware` artifact.
+Build details:
 [Holykeebs firmware documentation](https://docs.holykeebs.com/firmware/).

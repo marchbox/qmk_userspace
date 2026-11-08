@@ -1,4 +1,4 @@
-name: Build Binaries
+name: Publish Leviathan firmware
 
 on:
   workflow_call:
@@ -14,10 +14,10 @@ permissions:
 
 jobs:
   publish:
-    name: Publish
+    name: Publish Leviathan
     runs-on: ubuntu-latest
     concurrency:
-      group: charybdis-firmware-release
+      group: leviathan-firmware-release
       cancel-in-progress: false
 
     steps:
@@ -49,7 +49,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           token: ${{ github.token }}
-          name: BastardKB Firmware release ${{ steps.next.outputs.version }}
+          name: Leviathan firmware release ${{ steps.next.outputs.version }}
           tag_name: ${{ steps.next.outputs.r_version }}
           target_commitish: ${{ github.sha }}
           fail_on_unmatched_files: false

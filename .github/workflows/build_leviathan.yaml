@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   build:
-    name: 'QMK Userspace Build'
+    name: 'Build Leviathan'
     uses: qmk/.github/.github/workflows/qmk_userspace_build.yml@main
     with:
       qmk_repo: bastardkb/bastardkb-qmk
@@ -15,7 +15,7 @@ jobs:
       preparation_command: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
   publish:
-    name: 'QMK Userspace Publish'
-    uses: ./.github/workflows/qmk_userspace_publish.yml
+    name: 'Publish Leviathan'
+    uses: ./.github/workflows/publish_leviathan.yml
     if: needs.build.result == 'success'
     needs: build

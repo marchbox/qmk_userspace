@@ -7,6 +7,7 @@ permissions:
 
 jobs:
   build:
+    name: Build Sebastian
     runs-on: ubuntu-latest
     container: ghcr.io/qmk/qmk_cli:latest
     steps:
@@ -26,16 +27,16 @@ jobs:
       - name: Install firmware dependencies
         run: pip install -r qmk_firmware/requirements.txt
 
-      - name: Build Sweep
+      - name: Build Sebastian
         working-directory: qmk_firmware
         run: |
           qmk config user.qmk_home="$GITHUB_WORKSPACE/qmk_firmware"
           qmk config user.overlay_dir="$GITHUB_WORKSPACE"
-          qmk compile -kb holykeebs/sweeq -km leviathan -j "$(nproc)"
+          qmk compile -kb holykeebs/sweeq -km sebastian -j "$(nproc)"
 
-      - name: Upload Sweep firmware
+      - name: Upload Sebastian firmware
         uses: actions/upload-artifact@v7
         with:
-          name: Sweep-Firmware
-          path: holykeebs_sweeq_leviathan.uf2
+          name: Sebastian-Firmware
+          path: holykeebs_sweeq_sebastian.uf2
           if-no-files-found: error
