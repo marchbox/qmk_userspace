@@ -12,9 +12,10 @@ jobs:
     with:
       qmk_repo: bastardkb/bastardkb-qmk
       qmk_ref: main
+      preparation_command: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
   publish:
     name: 'QMK Userspace Publish'
-    uses: bastardkb/qmk_userspace/.github/workflows/qmk_userspace_publish.yml@main
-    if: always() && !cancelled()
+    uses: ./.github/workflows/qmk_userspace_publish.yml
+    if: needs.build.result == 'success'
     needs: build

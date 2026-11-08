@@ -15,46 +15,43 @@ permissions:
 jobs:
   publish:
     name: Publish
-    if: always() && !cancelled()
     runs-on: ubuntu-latest
+    concurrency:
+      group: charybdis-firmware-release
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v6
         with:
+          fetch-depth: 0
           fetch-tags: true
 
       - name: Download binaries
-        if: always() && !cancelled()
         uses: actions/download-artifact@v8
         with:
           name: Firmware
 
-      # - name: Delete release
-        # run: gh release delete ${{ inputs.release_name || 'latest' }} --cleanup-tag || true
-        # env:
-        #   GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Get Previous tag
-        id: previoustag
-        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
-        with:
-          pattern: r*[0-9]
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Get next version
         id: next
-        uses: 'WyriHaximus/github-action-next-release-version@1.0.0'
-        with:
-          version: ${{ steps.previoustag.outputs.tag }}
+        shell: bash
+        run: |
+          previous_tag=$(git tag --list 'r*' --sort=-version:refname | awk '/^r[0-9]+$/ { if (!found) print; found=1 }')
+          if [ -z "$previous_tag" ]; then
+            echo "::notice::No numbered release tags found; starting at r1."
+            version=1
+          else
+            previous_version=${previous_tag#r}
+            version=$((10#$previous_version + 1))
+          fi
+          printf 'version=%s\nr_version=r%s\n' "$version" "$version" >> "$GITHUB_OUTPUT"
 
       - name: Generate Release
         uses: softprops/action-gh-release@v3
-        if: always() && !cancelled()
         with:
           token: ${{ github.token }}
           name: BastardKB Firmware release ${{ steps.next.outputs.version }}
           tag_name: ${{ steps.next.outputs.r_version }}
+          target_commitish: ${{ github.sha }}
           fail_on_unmatched_files: false
           draft: false
           prerelease: false

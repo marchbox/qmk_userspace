@@ -22,8 +22,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Updates ALL submodules in the repo to their latest remote commit
-          git submodule update --remote --merge
+          # BastardKB stays pinned to the standalone pointing API used by Charybdis.
+          git submodule update --remote --merge modules/holykeebs
           
           # Commit and push if an update was made
           if ! git diff --quiet; then

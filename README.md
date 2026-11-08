@@ -12,6 +12,16 @@ The existing `qmk.json` targets and release workflow build against
 `bastardkb/bastardkb-qmk`. Sweep is intentionally not listed there because
 that fork does not supply its Holykeebs firmware.
 
+`modules/bastardkb` is pinned to
+`0cda221c0952d4e25072393da506f358ec529ed8`, the last revision before
+the pointing module acquired an unconditional Argos dependency.
+This preserves the existing pointing API, static combos, and tap dances.
+The submodule updater only advances Holykeebs; do not update BastardKB without
+migrating and validating the Charybdis keymap.
+
+Successful Charybdis builds publish numbered releases (`r1`, `r2`, ...),
+following BastardKB's upstream convention. Failed builds do not publish.
+
 ## Holykeebs Sweep
 
 The `leviathan` keymap builds Vial firmware for a **right-side TrackPoint**,
@@ -65,5 +75,5 @@ which can be assigned in Vial. Vial's keymap-only reset clears dynamic combos
 and tap dances rather than restoring their baked defaults.
 
 GitHub Actions provides the Sweep image as the separate `Sweep-Firmware`
-artifact; the Charybdis release workflow remains unchanged. Build details:
+artifact; Charybdis uses its separate numbered releases. Build details:
 [Holykeebs firmware documentation](https://docs.holykeebs.com/firmware/).
