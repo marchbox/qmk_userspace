@@ -3,6 +3,7 @@
 
 #include QMK_KEYBOARD_H
 #include "users/holykeebs/holykeebs.h"
+#include "users/holykeebs/pointing.h"
 #include "dynamic_keymap.h"
 #include "qmk_settings.h"
 #include "vial.h"
@@ -182,6 +183,7 @@ void eeconfig_init_keymap(void) {
 }
 
 void keyboard_post_init_keymap(void) {
+    g_hk_state.main.scroll_direction_inverted = true;
     set_auto_mouse_enable(true);
     // Older builds saved a zero timeout because auto mouse was not compiled in.
     if (!get_auto_mouse_timeout()) {
