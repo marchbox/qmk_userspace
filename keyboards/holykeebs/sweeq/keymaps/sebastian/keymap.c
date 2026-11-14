@@ -25,20 +25,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_Q, KC_W, KC_F, KC_P, KC_B,                      KC_J, KC_L, KC_U, KC_Y, KC_MINS,
         HRML(KC_A, KC_R, KC_S, KC_T), KC_G,                KC_M, HRMR(KC_N, KC_E, KC_I, KC_O),
         KC_Z, KC_X, KC_C, KC_D, KC_V,                      KC_K, KC_H, KC_COMM, KC_DOT, RSQT,
-                                    LT(3, KC_LSFT), LT(1, KC_SPC), LT(2, KC_BSPC), OSM(MOD_RCTL)
+                                    OSM(MOD_LSFT), LT(1, KC_SPC), LT(2, KC_BSPC), QK_REPEAT_KEY
     ),
     [1] = LAYOUT_wrapper(
         KC_1, KC_2, KC_3, KC_4, KC_5,                      KC_6, KC_7, KC_8, KC_9, KC_0,
         HRML(KC_MINS, KC_PLUS, KC_EQL, KC_DQT), KC_COLN,    KC_SCLN, HRMR(KC_LPRN, KC_RPRN, KC_LT, KC_GT),
         KC_ASTR, KC_DLR, KC_AMPR, KC_EXLM, KC_GRV,          KC_SLSH, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC,
-                                    KC_TRNS, KC_TRNS,    KC_TRNS, KC_TRNS
+                                    KC_TRNS, KC_TRNS,    MO(3), KC_TRNS
     ),
     [2] = LAYOUT_wrapper(
         KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                 KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,
-        LSFT_T(KC_F11), OSM(MOD_LALT), OSM(MOD_LCTL), OSM(MOD_LGUI), KC_NO,
+        OSM(MOD_LSFT), OSM(MOD_RALT), OSM(MOD_LCTL), OSM(MOD_LGUI), G(KC_F5),
                                                          KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_F12,
-        G(KC_Z), G(KC_X), G(KC_C), G(KC_V), LSA(LGUI(KC_V)), KC_PGDN, KC_END, KC_HOME, KC_PGUP, KC_NO,
-                                    KC_TRNS, KC_TRNS,    KC_TRNS, KC_TRNS
+        G(KC_Z), G(KC_X), G(KC_C), G(KC_V), LSA(LGUI(KC_V)), KC_PGDN, KC_END, KC_HOME, KC_PGUP, KC_F11,
+                                    KC_TRNS, MO(3),    KC_TRNS, KC_TRNS
     ),
     [3] = LAYOUT_wrapper(
         HK_I_SCROLL, KC_NO, KC_NO, KC_NO, KC_NO,           KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
