@@ -23,30 +23,74 @@
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_wrapper(
-        KC_Q, KC_W, KC_F, KC_P, KC_B,                      KC_J, KC_L, KC_U, KC_Y, KC_MINS,
-        HRML(KC_A, KC_R, KC_S, KC_T), KC_G,                KC_M, HRMR(KC_N, KC_E, KC_I, KC_O),
-        KC_Z, KC_X, KC_C, KC_D, KC_V,                      KC_K, KC_H, KC_COMM, KC_DOT, RSQT,
-                                    OSM(MOD_LSFT), LT(1, KC_SPC), LT(2, KC_BSPC), QK_REPEAT_KEY
+        // row 1
+        KC_Q, KC_W, KC_F, KC_P, KC_B,
+        KC_J, KC_L, KC_U, KC_Y, KC_MINS,
+        // row 2
+        HRML(KC_A, KC_R, KC_S, KC_T), KC_G,
+        KC_M, HRMR(KC_N, KC_E, KC_I, KC_O),
+        // row 3
+        KC_Z, KC_X, KC_C, KC_D, KC_V,
+        KC_K, KC_H, KC_COMM, KC_DOT, RSQT,
+        // thumbs
+        OSM(MOD_LSFT), LT(1, KC_SPC),
+        LT(2, KC_BSPC), QK_REPEAT_KEY
     ),
     [1] = LAYOUT_wrapper(
-        KC_1, KC_2, KC_3, KC_4, KC_5,                      KC_6, KC_7, KC_8, KC_9, KC_0,
-        HRML(KC_MINS, KC_PLUS, KC_EQL, KC_DQT), KC_COLN,    KC_SCLN, HRMR(KC_LPRN, KC_RPRN, KC_LT, KC_GT),
-        KC_ASTR, KC_DLR, KC_AMPR, KC_EXLM, KC_GRV,          KC_SLSH, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC,
-                                    KC_TRNS, KC_TRNS,    MO(3), KC_TRNS
+        // row 1
+        KC_1, KC_2, KC_3, KC_4, KC_5,
+        KC_6, KC_7, KC_8, KC_9, KC_0,
+        // row 2
+        HRML(KC_MINS, KC_PLUS, KC_EQL, KC_DQT), KC_COLN,
+        KC_SCLN, HRMR(KC_LPRN, KC_RPRN, KC_LT, KC_GT),
+        // row 3
+        KC_ASTR, KC_DLR, KC_AMPR, KC_EXLM, KC_GRV,
+        KC_SLSH, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC,
+        // thumbs
+        KC_TRNS, KC_TRNS,
+        MO(3), KC_TRNS
     ),
     [2] = LAYOUT_wrapper(
-        KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                 KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,
-        OSM(MOD_LSFT), OSM(MOD_RALT), OSM(MOD_LCTL), OSM(MOD_LGUI), G(KC_F5),
-                                                         KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_F12,
-        G(KC_Z), G(KC_X), G(KC_C), G(KC_V), LSA(LGUI(KC_V)), KC_PGDN, KC_END, KC_HOME, KC_PGUP, KC_F11,
-                                    KC_TRNS, MO(3),    KC_TRNS, KC_TRNS
+        // row 1
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        // row 2
+        OSM(MOD_LSFT), OSM(MOD_RALT), OSM(MOD_LCTL), OSM(MOD_LGUI), KC_NO,
+        KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_NO,
+        // row 3
+        G(KC_Z), G(KC_X), G(KC_C), G(KC_V), LSA(LGUI(KC_V)),
+        KC_PGDN, KC_END, KC_HOME, KC_PGUP, KC_NO,
+        // thumbs
+        KC_TRNS, MO(3),
+        KC_TRNS, KC_TRNS
     ),
     [3] = LAYOUT_wrapper(
-        HK_I_SCROLL, KC_NO, KC_NO, KC_NO, KC_NO,           KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        // row 1
+        HK_I_SCROLL, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        // row 2
         HK_D_MODE_T, MS_BTN2, HK_D_MODE, MS_BTN1, HK_S_MODE,
-                                                         HK_D_MODE, RGUI_T(KC_VOLD), RCTL_T(KC_MUTE), RALT_T(KC_VOLU), KC_RSFT,
-        HK_SAVE, KC_NO, KC_NO, KC_NO, QK_LAYER_LOCK,               KC_NO, KC_MPRV, KC_MPLY, KC_MNXT, KC_NO,
-                                    KC_TRNS, KC_TRNS,    MS_BTN1, MS_BTN2
+        HK_D_MODE, KC_RGUI, KC_RCTL, KC_RALT, KC_RSFT,
+        // row 3
+        HK_SAVE, KC_NO, KC_NO, KC_NO, QK_LAYER_LOCK,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        // thumbs
+        KC_TRNS, KC_TRNS,
+        MS_BTN1, MS_BTN2
+    ),
+    [4] = LAYOUT_wrapper(
+        // row 1
+        KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,
+        KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,
+        // row 2
+        KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, KC_F11,
+        KC_F12, RGUI_T(KC_VOLD), RCTL_T(KC_MUTE), RALT_T(KC_VOLU), KC_RSFT,
+        // row 3
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_MPRV, KC_MPLY, KC_MNXT, KC_NO,
+        // thumbs
+        KC_NO, KC_NO,
+        KC_NO, KC_NO
     ),
 };
 
@@ -76,6 +120,7 @@ static const vial_combo_entry_t default_combos[] = {
     {{KC_Q, KC_W, KC_F, KC_P}, QK_MACRO_0},
     {{KC_L, KC_U, KC_Y, KC_MINS}, TD(0)},
     {{KC_F1, KC_F2, KC_F3, KC_F4}, QK_BOOT},
+    {{OSM(MOD_LSFT), QK_REPEAT_KEY}, MO(4)},
 };
 
 #define SHIFT_OVERRIDE(trigger_, replacement_) \
@@ -147,6 +192,21 @@ static const uint8_t default_macro[] = {
 _Static_assert(ARRAY_SIZE(default_tap_dances) <= VIAL_TAP_DANCE_ENTRIES, "Not enough Vial tap dance slots");
 _Static_assert(ARRAY_SIZE(default_combos) <= VIAL_COMBO_ENTRIES, "Not enough Vial combo slots");
 _Static_assert(ARRAY_SIZE(default_overrides) <= VIAL_KEY_OVERRIDE_ENTRIES, "Not enough Vial override slots");
+
+bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
+    (void)keycode;
+    (void)record;
+    if (combo_index == ARRAY_SIZE(default_combos) - 1 && combo->keycode == MO(4)) {
+        return get_highest_layer(layer_state | default_layer_state) == 0;
+    }
+    return true;
+}
+
+bool process_combo_key_release(uint16_t combo_index, combo_t *combo, uint8_t key_index, uint16_t keycode) {
+    (void)key_index;
+    (void)keycode;
+    return combo_index == ARRAY_SIZE(default_combos) - 1 && combo->keycode == MO(4);
+}
 
 static void restore_vial_defaults(void) {
     via_eeprom_set_valid(false);
