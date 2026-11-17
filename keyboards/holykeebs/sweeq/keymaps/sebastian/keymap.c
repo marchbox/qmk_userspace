@@ -134,7 +134,6 @@ static const vial_key_override_entry_t default_overrides[] = {
     SHIFT_OVERRIDE(KC_COMM, KC_QUES),
     SHIFT_OVERRIDE(KC_DOT, KC_EXLM),
     SHIFT_OVERRIDE(RSQT, NDSH),
-    SHIFT_OVERRIDE(KC_EQL, KC_PERC),
     SHIFT_OVERRIDE(KC_DQT, KC_QUOT),
     SHIFT_OVERRIDE(KC_COLN, KC_DOT),
     SHIFT_OVERRIDE(KC_ASTR, KC_CIRC),
@@ -142,7 +141,6 @@ static const vial_key_override_entry_t default_overrides[] = {
     SHIFT_OVERRIDE(KC_AMPR, KC_PIPE),
     SHIFT_OVERRIDE(KC_EXLM, KC_QUES),
     SHIFT_OVERRIDE(KC_SCLN, KC_COMM),
-    SHIFT_OVERRIDE(KC_RPRN, KC_AT),
     SHIFT_OVERRIDE(KC_SLSH, KC_BSLS),
     SHIFT_OVERRIDE(KC_LCBR, LDQT),
     SHIFT_OVERRIDE(KC_RCBR, RDQT),
@@ -264,13 +262,13 @@ bool get_auto_shifted_key(uint16_t keycode, keyrecord_t *record) {
     if (get_repeat_key_count() || !QS_auto_shift_enable) {
         return false;
     }
-    uint16_t tap_keycode = autoshift_tap_keycode(keycode);
-    bool has_override = autoshift_override(tap_keycode, record) != NULL;
-    if (IS_QK_MOD_TAP(keycode) && !(tap_keycode >= KC_A && tap_keycode <= KC_Z) && !has_override) {
-        return false;
-    }
+    uint16_t tap_keycode  = autoshift_tap_keycode(keycode);
+    bool     has_override = autoshift_override(tap_keycode, record) != NULL;
     if (has_override && !QS_auto_shift_no_auto_shift_special) {
         return true;
+    }
+    if (IS_QK_MODS(tap_keycode)) {
+        tap_keycode = QK_MODS_GET_BASIC_KEYCODE(tap_keycode);
     }
     return vial_get_auto_shifted_key(tap_keycode, record);
 }
