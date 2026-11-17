@@ -9,6 +9,7 @@
 #include "vial.h"
 #include "via.h"
 #include "pointing_device_auto_mouse.h"
+#include "repeat_key.h"
 #include <string.h>
 
 #define LDQT RALT(KC_LBRC)
@@ -212,6 +213,40 @@ static uint16_t autoshift_tap_keycode(uint16_t keycode) {
     return get_tap_keycode(keycode);
 }
 
+static void remember_output(uint16_t keycode, uint8_t mods) {
+    if (!get_repeat_key_count()) {
+        set_last_keycode(keycode);
+        set_last_mods(mods);
+    }
+}
+
+static bool remember_override(bool activated, void *context) {
+    const key_override_t *override = context;
+    if (activated) {
+        uint8_t mods = get_mods() | get_weak_mods() | get_oneshot_mods();
+        remember_output(override->replacement, mods & ~override->suppressed_mods);
+    }
+    return true;
+}
+
+const key_override_t *vial_key_override_get(uint16_t index);
+
+const key_override_t *key_override_get(uint16_t index) {
+    // Let QMK release any active override, but never transform resolved repeats.
+    if (get_repeat_key_count()) {
+        return NULL;
+    }
+    const key_override_t *override = vial_key_override_get(index);
+    if (!override) {
+        return NULL;
+    }
+    static key_override_t repeat_overrides[VIAL_KEY_OVERRIDE_ENTRIES];
+    repeat_overrides[index]               = *override;
+    repeat_overrides[index].custom_action = remember_override;
+    repeat_overrides[index].context       = &repeat_overrides[index];
+    return &repeat_overrides[index];
+}
+
 static const vial_key_override_entry_t *autoshift_override(uint16_t keycode, keyrecord_t *record) {
     uint8_t layer = read_source_layers_cache(record->event.key);
     for (uint8_t i = 0; i < ARRAY_SIZE(default_overrides); ++i) {
@@ -226,7 +261,7 @@ static const vial_key_override_entry_t *autoshift_override(uint16_t keycode, key
 bool vial_get_auto_shifted_key(uint16_t keycode, keyrecord_t *record);
 
 bool get_auto_shifted_key(uint16_t keycode, keyrecord_t *record) {
-    if (!QS_auto_shift_enable) {
+    if (get_repeat_key_count() || !QS_auto_shift_enable) {
         return false;
     }
     uint16_t tap_keycode = autoshift_tap_keycode(keycode);
@@ -241,16 +276,24 @@ bool get_auto_shifted_key(uint16_t keycode, keyrecord_t *record) {
 }
 
 void autoshift_press_user(uint16_t keycode, bool shifted, keyrecord_t *record) {
-    keycode = autoshift_tap_keycode(keycode);
+    bool    remember                          = get_last_keycode() == keycode;
+    uint8_t mods                              = get_last_mods();
+    keycode                                   = autoshift_tap_keycode(keycode);
     const vial_key_override_entry_t *override = shifted ? autoshift_override(keycode, record) : NULL;
     if (override) {
         del_weak_mods(MOD_MASK_SHIFT);
         register_code16(override->replacement);
+        if (remember) {
+            remember_output(override->replacement, mods & ~MOD_MASK_SHIFT);
+        }
     } else {
         if (shifted) {
             add_weak_mods(MOD_BIT(KC_LSFT));
         }
         register_code16(keycode);
+        if (remember) {
+            remember_output(keycode, mods | (shifted ? MOD_BIT(KC_LSFT) : 0));
+        }
     }
 }
 
@@ -389,10 +432,12 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
                 del_mods(MOD_MASK_SHIFT);
                 del_oneshot_mods(MOD_MASK_SHIFT);
                 tap_code16(shifted);
+                remember_output(shifted, get_last_mods() & ~MOD_MASK_SHIFT);
                 set_mods(mods);
                 set_oneshot_mods(oneshot);
             } else {
                 tap_code16(tap_hold_overrides[i].tap);
+                remember_output(tap_hold_overrides[i].tap, get_last_mods());
             }
             return false;
         }

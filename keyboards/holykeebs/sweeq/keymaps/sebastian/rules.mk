@@ -10,6 +10,8 @@ $(INTERMEDIATE_OUTPUT)/quantum/qmk_settings.o: private CFLAGS += \
     -Dget_flow_tap_term=vial_get_flow_tap_term
 # Vial's non-weak Auto Shift predicate does not recognize mod-tap keycodes.
 $(INTERMEDIATE_OUTPUT)/quantum/qmk_settings.o: private CFLAGS += -Dget_auto_shifted_key=vial_get_auto_shifted_key
+# Attach Repeat Key bookkeeping to Vial's runtime key overrides.
+$(INTERMEDIATE_OUTPUT)/quantum/vial.o: private CFLAGS += -Dkey_override_get=vial_key_override_get
 # Upstream's RETRO_TAPPING_PER_KEY macro lacks parentheses around an &&.
 $(INTERMEDIATE_OUTPUT)/quantum/action_tapping.o: private CFLAGS += -Wno-parentheses
 USER_NAME = holykeebs
