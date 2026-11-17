@@ -165,6 +165,44 @@ static const tap_hold_override_t tap_hold_overrides[] = {
 };
 
 // clang-format on
+uint16_t qs_get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    return IS_QK_LAYER_TAP(keycode) ? 240 : QS.tapping_term;
+}
+
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
+    return IS_QK_LAYER_TAP(keycode) || QS_tapping_hold_on_other_key_press;
+}
+
+uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
+    return IS_QK_LAYER_TAP(keycode) ? 175 : QS.quick_tap_term;
+}
+
+bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
+    return !IS_QK_LAYER_TAP(keycode) && QS_tapping_retro_tapping;
+}
+
+bool get_chordal_hold(uint16_t keycode, keyrecord_t *record, uint16_t other_keycode, keyrecord_t *other_record) {
+    if (IS_QK_LAYER_TAP(keycode) || !QS_tapping_chordal_hold) {
+        return true;
+    }
+    return get_chordal_hold_default(record, other_record);
+}
+
+uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_keycode) {
+    if (IS_QK_LAYER_TAP(keycode)) {
+        // ZMK's prior-idle guard also covers Backspace and shifted symbols.
+        uint16_t prev_tap = get_tap_keycode(prev_keycode);
+        if (IS_QK_MODS(prev_tap)) {
+            prev_tap = QK_MODS_GET_BASIC_KEYCODE(prev_tap);
+        }
+        return prev_tap > KC_TRNS && prev_tap < KC_LCTL ? 150 : 0;
+    }
+    if (is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode)) {
+        return QS.flow_tap_term;
+    }
+    return 0;
+}
+
 static uint16_t autoshift_tap_keycode(uint16_t keycode) {
     for (uint8_t i = 0; i < ARRAY_SIZE(tap_hold_overrides); ++i) {
         if (keycode == tap_hold_overrides[i].keycode) {
