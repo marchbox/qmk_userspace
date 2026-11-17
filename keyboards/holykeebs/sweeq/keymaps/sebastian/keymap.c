@@ -152,19 +152,77 @@ static const vial_key_override_entry_t default_overrides[] = {
 typedef struct {
     uint16_t keycode;
     uint16_t tap;
-    uint16_t shifted;
 } tap_hold_override_t;
 
 static const tap_hold_override_t tap_hold_overrides[] = {
-    {LALT_T(KC_PLUS), KC_PLUS, 0},
-    {LCTL_T(KC_EQL), KC_EQL, KC_PERC},
-    {LGUI_T(KC_DQT), KC_DQT, KC_QUOT},
-    {RGUI_T(KC_LPRN), KC_LPRN, 0},
-    {RCTL_T(KC_RPRN), KC_RPRN, KC_AT},
-    {RALT_T(KC_LT), KC_LT, 0},
-    {RSFT_T(KC_GT), KC_GT, 0},
+    {LALT_T(KC_PLUS), KC_PLUS},
+    {LCTL_T(KC_EQL), KC_EQL},
+    {LGUI_T(KC_DQT), KC_DQT},
+    {RGUI_T(KC_LPRN), KC_LPRN},
+    {RCTL_T(KC_RPRN), KC_RPRN},
+    {RALT_T(KC_LT), KC_LT},
+    {RSFT_T(KC_GT), KC_GT},
 };
 
+// clang-format on
+static uint16_t autoshift_tap_keycode(uint16_t keycode) {
+    for (uint8_t i = 0; i < ARRAY_SIZE(tap_hold_overrides); ++i) {
+        if (keycode == tap_hold_overrides[i].keycode) {
+            return tap_hold_overrides[i].tap;
+        }
+    }
+    return get_tap_keycode(keycode);
+}
+
+static const vial_key_override_entry_t *autoshift_override(uint16_t keycode, keyrecord_t *record) {
+    uint8_t layer = read_source_layers_cache(record->event.key);
+    for (uint8_t i = 0; i < ARRAY_SIZE(default_overrides); ++i) {
+        const vial_key_override_entry_t *override = &default_overrides[i];
+        if (override->trigger == keycode && (override->layers & (1UL << layer))) {
+            return override;
+        }
+    }
+    return NULL;
+}
+
+bool vial_get_auto_shifted_key(uint16_t keycode, keyrecord_t *record);
+
+bool get_auto_shifted_key(uint16_t keycode, keyrecord_t *record) {
+    if (!QS_auto_shift_enable) {
+        return false;
+    }
+    uint16_t tap_keycode = autoshift_tap_keycode(keycode);
+    bool has_override = autoshift_override(tap_keycode, record) != NULL;
+    if (IS_QK_MOD_TAP(keycode) && !(tap_keycode >= KC_A && tap_keycode <= KC_Z) && !has_override) {
+        return false;
+    }
+    if (has_override && !QS_auto_shift_no_auto_shift_special) {
+        return true;
+    }
+    return vial_get_auto_shifted_key(tap_keycode, record);
+}
+
+void autoshift_press_user(uint16_t keycode, bool shifted, keyrecord_t *record) {
+    keycode = autoshift_tap_keycode(keycode);
+    const vial_key_override_entry_t *override = shifted ? autoshift_override(keycode, record) : NULL;
+    if (override) {
+        del_weak_mods(MOD_MASK_SHIFT);
+        register_code16(override->replacement);
+    } else {
+        if (shifted) {
+            add_weak_mods(MOD_BIT(KC_LSFT));
+        }
+        register_code16(keycode);
+    }
+}
+
+void autoshift_release_user(uint16_t keycode, bool shifted, keyrecord_t *record) {
+    keycode = autoshift_tap_keycode(keycode);
+    const vial_key_override_entry_t *override = shifted ? autoshift_override(keycode, record) : NULL;
+    unregister_code16(override ? override->replacement : keycode);
+}
+
+// clang-format off
 static const struct {
     uint16_t id;
     uint32_t value;
@@ -280,8 +338,13 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
         if (keycode != tap_hold_overrides[i].keycode) {
             continue;
         }
+        if (get_retro_tapping(keycode, record) && get_auto_shifted_key(keycode, record) &&
+            !((get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT)) {
+            return true;
+        }
         if (record->tap.count && record->event.pressed) {
-            uint16_t shifted = tap_hold_overrides[i].shifted;
+            const vial_key_override_entry_t *override = autoshift_override(tap_hold_overrides[i].tap, record);
+            uint16_t shifted = override ? override->replacement : 0;
             if (shifted && ((get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT)) {
                 uint8_t mods    = get_mods();
                 uint8_t oneshot = get_oneshot_mods();
