@@ -125,14 +125,12 @@ static const vial_combo_entry_t default_combos[] = {
     {{KC_F, KC_P}, KC_COLN},
     {{KC_L, KC_U}, KC_SCLN},
     {{KC_Y, KC_MINS}, KC_SLSH},
-    {{LSFT_T(KC_A), LALT_T(KC_R)}, KC_DLR},
+    {{LSFT_T(KC_A), LALT_T(KC_R)}, KC_LBRC},
     {{LCTL_T(KC_S), LGUI_T(KC_T)}, KC_DQT},
     {{RGUI_T(KC_N), RCTL_T(KC_E)}, KC_LPRN},
     {{RALT_T(KC_I), RSFT_T(KC_O)}, KC_LT},
-    {{KC_Z, KC_X}, KC_AMPR},
     {{KC_C, KC_D}, KC_EQL},
     {{KC_H, KC_COMM}, KC_LCBR},
-    {{KC_DOT, RSQT}, KC_LBRC},
     {{OSM(MOD_LSFT), QK_REPEAT_KEY}, MO(4)},
 };
 
