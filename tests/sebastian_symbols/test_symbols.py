@@ -183,26 +183,26 @@ static void check_symbol(uint16_t keycode, uint16_t plain, uint16_t shifted, boo
 int main(void) {
     const uint8_t positions[][2] = {
         {0, 1}, {2, 3}, {6, 7}, {8, 9}, {10, 11}, {12, 13},
-        {16, 17}, {18, 19}, {22, 23}, {26, 27}
+        {16, 17}, {18, 19}, {20, 21}, {22, 23}, {26, 27}, {28, 29}
     };
     const uint16_t symbols[] = {
-        KC_GRV, KC_COLN, KC_SCLN, KC_SLSH, KC_LBRC, KC_DQT,
-        KC_LPRN, KC_LT, KC_EQL, KC_LCBR
+        KC_AT, KC_COLN, KC_SCLN, KC_SLSH, KC_LBRC, KC_DQT,
+        KC_LPRN, KC_LT, KC_DLR, KC_EQL, KC_LCBR, KC_HASH
     };
     const uint16_t shifted[] = {
-        KC_TILD, KC_DOT, KC_COMM, KC_BSLS, KC_RBRC, KC_QUOT,
-        KC_RPRN, KC_GT, KC_PLUS, KC_RCBR
+        KC_AT, KC_DOT, KC_COMM, KC_BSLS, KC_RBRC, KC_QUOT,
+        KC_RPRN, KC_GT, KC_DLR, KC_PLUS, KC_RCBR, KC_HASH
     };
     for (size_t i = 0; i < ARRAY_SIZE(symbols); ++i) {
         check_combo(0, positions[i][0], positions[i][1], symbols[i]);
         check_symbol(symbols[i], symbols[i], shifted[i], true);
     }
-    for (size_t i = 0; i < ARRAY_SIZE(default_combos); ++i) {
-        const vial_combo_entry_t *combo = &default_combos[i];
-        if (combo->input[2]) continue;
-        assert(!(combo->input[0] == keymaps[0][0][20] && combo->input[1] == keymaps[0][0][21]));
-        assert(!(combo->input[0] == keymaps[0][0][28] && combo->input[1] == keymaps[0][0][29]));
-    }
+    check_combo(0, 1, 3, KC_END);
+    check_combo(0, 6, 8, KC_HOME);
+    check_combo(0, 11, 13, KC_RGHT);
+    check_combo(0, 16, 18, KC_DOWN);
+    check_combo(0, 21, 23, KC_LEFT);
+    check_combo(0, 26, 28, KC_UP);
     const uint8_t layer1_positions[] = {10, 11, 16, 17, 18, 19, 21, 22, 26, 27, 28, 29};
     const uint16_t layer1_symbols[] = {
         KC_PERC, KC_MINS, KC_LPRN, KC_LCBR, KC_LBRC, KC_LT,
