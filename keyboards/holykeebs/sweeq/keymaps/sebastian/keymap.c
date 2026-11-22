@@ -8,7 +8,6 @@
 #include "qmk_settings.h"
 #include "vial.h"
 #include "via.h"
-#include "pointing_device_auto_mouse.h"
 #include "repeat_key.h"
 #include <string.h>
 
@@ -139,8 +138,8 @@ static const vial_combo_entry_t default_combos[] = {
     {{RGUI_T(KC_N), RALT_T(KC_I)}, KC_DOWN},
     {{KC_X, KC_D}, KC_LEFT},
     {{KC_H, KC_DOT}, KC_UP},
-    {{KC_D, KC_V}, MS_BTN1},
-    {{KC_P, KC_B}, MS_BTN2},
+    {{KC_B, KC_G}, MS_BTN1},
+    {{KC_G, KC_V}, MS_BTN2},
     {{LGUI_T(KC_T), KC_G}, HK_D_MODE},
     {{OSM(MOD_LSFT), QK_REPEAT_KEY}, MO(4)},
 };
@@ -410,27 +409,6 @@ void eeconfig_init_keymap(void) {
 
 void keyboard_post_init_keymap(void) {
     g_hk_state.main.scroll_direction_inverted = true;
-    set_auto_mouse_enable(true);
-    // Older builds saved a zero timeout because auto mouse was not compiled in.
-    if (!get_auto_mouse_timeout()) {
-        set_auto_mouse_timeout(AUTO_MOUSE_TIME);
-    }
-}
-
-bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
-    (void)record;
-    switch (keycode) {
-        case LT(3, KC_LSFT):
-        case HK_D_MODE:
-        case HK_D_MODE_T:
-        case HK_S_MODE:
-        case HK_S_MODE_T:
-        case HK_I_SCROLL:
-        case HK_C_SCROLL:
-            return true;
-        default:
-            return false;
-    }
 }
 
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
