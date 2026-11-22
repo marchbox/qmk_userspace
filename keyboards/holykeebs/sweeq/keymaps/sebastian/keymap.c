@@ -139,8 +139,8 @@ static const vial_combo_entry_t default_combos[] = {
     {{RGUI_T(KC_N), RALT_T(KC_I)}, KC_DOWN},
     {{KC_X, KC_D}, KC_LEFT},
     {{KC_H, KC_DOT}, KC_UP},
-    {{KC_B, KC_G}, MS_BTN1},
-    {{KC_G, KC_V}, MS_BTN2},
+    {{KC_D, KC_V}, MS_BTN1},
+    {{KC_P, KC_B}, MS_BTN2},
     {{LGUI_T(KC_T), KC_G}, HK_D_MODE},
     {{OSM(MOD_LSFT), QK_REPEAT_KEY}, MO(4)},
 };

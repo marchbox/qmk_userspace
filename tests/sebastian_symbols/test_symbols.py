@@ -203,8 +203,8 @@ int main(void) {
     check_combo(0, 16, 18, KC_DOWN);
     check_combo(0, 21, 23, KC_LEFT);
     check_combo(0, 26, 28, KC_UP);
-    check_combo(0, 4, 14, MS_BTN1);
-    check_combo(0, 14, 24, MS_BTN2);
+    check_combo(0, 23, 24, MS_BTN1);
+    check_combo(0, 3, 4, MS_BTN2);
     check_combo(0, 13, 14, HK_D_MODE);
     const uint8_t layer1_positions[] = {10, 11, 16, 17, 18, 19, 21, 22, 26, 27, 28, 29};
     const uint16_t layer1_symbols[] = {
