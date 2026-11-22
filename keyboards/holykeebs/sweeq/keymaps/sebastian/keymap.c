@@ -42,11 +42,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_1, KC_2, KC_3, KC_4, KC_5,
         KC_6, KC_7, KC_8, KC_9, KC_0,
         // row 2
-        HRML(KC_MINS, KC_PLUS, KC_EQL, KC_DQT), KC_COLN,
-        KC_SCLN, HRMR(KC_LPRN, KC_RPRN, KC_LT, KC_GT),
+        HRML(KC_PERC, KC_MINS, KC_EQL, KC_DQT), KC_COLN,
+        KC_SCLN, HRMR(KC_LPRN, KC_LCBR, KC_LBRC, KC_LT),
         // row 3
-        KC_ASTR, KC_DLR, KC_AMPR, KC_EXLM, KC_GRV,
-        KC_SLSH, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC,
+        KC_ASTR, KC_PIPE, KC_AMPR, KC_EXLM, KC_GRV,
+        KC_SLSH, KC_DLR, KC_HASH, LDQT, LSQT,
         // thumbs
         KC_TRNS, KC_TRNS,
         MO(3), KC_TRNS
@@ -103,24 +103,36 @@ static const vial_combo_entry_t default_combos[] = {
     {{KC_W, KC_F}, KC_ESC},
     {{KC_2, KC_3}, KC_ESC},
     {{LALT_T(KC_R), LCTL_T(KC_S)}, KC_TAB},
-    {{LALT_T(KC_PLUS), LCTL_T(KC_EQL)}, KC_TAB},
+    {{LALT_T(KC_MINS), LCTL_T(KC_EQL)}, KC_TAB},
     {{KC_X, KC_C}, CW_TOGG},
-    {{KC_DLR, KC_AMPR}, CW_TOGG},
+    {{KC_PIPE, KC_AMPR}, CW_TOGG},
     {{KC_U, KC_Y}, KC_DEL},
     {{KC_8, KC_9}, KC_DEL},
     {{RCTL_T(KC_E), RALT_T(KC_I)}, KC_BSPC},
-    {{RCTL_T(KC_RPRN), RALT_T(KC_LT)}, KC_BSPC},
+    {{RCTL_T(KC_LCBR), RALT_T(KC_LBRC)}, KC_BSPC},
     {{KC_COMM, KC_DOT}, KC_ENT},
-    {{KC_RCBR, KC_LBRC}, KC_ENT},
+    {{KC_HASH, LDQT}, KC_ENT},
     {{KC_Z, KC_X, KC_C, KC_D}, G(KC_SPC)},
     {{KC_H, KC_COMM, KC_DOT, RSQT}, KC_MUTE},
     {{KC_X, KC_C, KC_D}, KC_SPC},
-    {{KC_DLR, KC_AMPR, KC_EXLM}, KC_SPC},
+    {{KC_PIPE, KC_AMPR, KC_EXLM}, KC_SPC},
     {{KC_H, KC_COMM, KC_DOT}, KC_SPC},
-    {{KC_LCBR, KC_RCBR, KC_LBRC}, KC_SPC},
+    {{KC_DLR, KC_HASH, LDQT}, KC_SPC},
     {{KC_Q, KC_W, KC_F, KC_P}, QK_MACRO_0},
     {{KC_L, KC_U, KC_Y, KC_MINS}, TD(0)},
     {{KC_F1, KC_F2, KC_F3, KC_F4}, QK_BOOT},
+    {{KC_Q, KC_W}, KC_GRV},
+    {{KC_F, KC_P}, KC_COLN},
+    {{KC_L, KC_U}, KC_SCLN},
+    {{KC_Y, KC_MINS}, KC_SLSH},
+    {{LSFT_T(KC_A), LALT_T(KC_R)}, KC_DLR},
+    {{LCTL_T(KC_S), LGUI_T(KC_T)}, KC_DQT},
+    {{RGUI_T(KC_N), RCTL_T(KC_E)}, KC_LPRN},
+    {{RALT_T(KC_I), RSFT_T(KC_O)}, KC_LT},
+    {{KC_Z, KC_X}, KC_AMPR},
+    {{KC_C, KC_D}, KC_EQL},
+    {{KC_H, KC_COMM}, KC_LCBR},
+    {{KC_DOT, RSQT}, KC_LBRC},
     {{OSM(MOD_LSFT), QK_REPEAT_KEY}, MO(4)},
 };
 
@@ -135,17 +147,18 @@ static const vial_key_override_entry_t default_overrides[] = {
     SHIFT_OVERRIDE(KC_DOT, KC_EXLM),
     SHIFT_OVERRIDE(RSQT, NDSH),
     SHIFT_OVERRIDE(KC_DQT, KC_QUOT),
+    SHIFT_OVERRIDE(KC_PERC, KC_AT),
     SHIFT_OVERRIDE(KC_COLN, KC_DOT),
     SHIFT_OVERRIDE(KC_ASTR, KC_CIRC),
-    SHIFT_OVERRIDE(KC_DLR, KC_HASH),
-    SHIFT_OVERRIDE(KC_AMPR, KC_PIPE),
     SHIFT_OVERRIDE(KC_EXLM, KC_QUES),
     SHIFT_OVERRIDE(KC_SCLN, KC_COMM),
     SHIFT_OVERRIDE(KC_SLSH, KC_BSLS),
-    SHIFT_OVERRIDE(KC_LCBR, LDQT),
-    SHIFT_OVERRIDE(KC_RCBR, RDQT),
-    SHIFT_OVERRIDE(KC_LBRC, LSQT),
-    SHIFT_OVERRIDE(KC_RBRC, RSQT),
+    SHIFT_OVERRIDE(KC_LPRN, KC_RPRN),
+    SHIFT_OVERRIDE(KC_LCBR, KC_RCBR),
+    SHIFT_OVERRIDE(KC_LBRC, KC_RBRC),
+    SHIFT_OVERRIDE(KC_LT, KC_GT),
+    SHIFT_OVERRIDE(LDQT, RDQT),
+    SHIFT_OVERRIDE(LSQT, RSQT),
 };
 
 typedef struct {
@@ -154,13 +167,14 @@ typedef struct {
 } tap_hold_override_t;
 
 static const tap_hold_override_t tap_hold_overrides[] = {
-    {LALT_T(KC_PLUS), KC_PLUS},
+    {LSFT_T(KC_PERC), KC_PERC},
+    {LALT_T(KC_MINS), KC_MINS},
     {LCTL_T(KC_EQL), KC_EQL},
     {LGUI_T(KC_DQT), KC_DQT},
     {RGUI_T(KC_LPRN), KC_LPRN},
-    {RCTL_T(KC_RPRN), KC_RPRN},
-    {RALT_T(KC_LT), KC_LT},
-    {RSFT_T(KC_GT), KC_GT},
+    {RCTL_T(KC_LCBR), KC_LCBR},
+    {RALT_T(KC_LBRC), KC_LBRC},
+    {RSFT_T(KC_LT), KC_LT},
 };
 
 // clang-format on
@@ -229,6 +243,8 @@ static bool remember_override(bool activated, void *context) {
 
 const key_override_t *vial_key_override_get(uint16_t index);
 
+static bool processing_combo_record;
+
 const key_override_t *key_override_get(uint16_t index) {
     // Let QMK release any active override, but never transform resolved repeats.
     if (get_repeat_key_count()) {
@@ -239,14 +255,18 @@ const key_override_t *key_override_get(uint16_t index) {
         return NULL;
     }
     static key_override_t repeat_overrides[VIAL_KEY_OVERRIDE_ENTRIES];
-    repeat_overrides[index]               = *override;
+    repeat_overrides[index] = *override;
+    if (processing_combo_record) {
+        // Combo events use a synthetic key position, not a cached source layer.
+        repeat_overrides[index].layers = (override->layers & 1) ? ~(layer_state_t)0 : 0;
+    }
     repeat_overrides[index].custom_action = remember_override;
     repeat_overrides[index].context       = &repeat_overrides[index];
     return &repeat_overrides[index];
 }
 
 static const vial_key_override_entry_t *autoshift_override(uint16_t keycode, keyrecord_t *record) {
-    uint8_t layer = read_source_layers_cache(record->event.key);
+    uint8_t layer = IS_COMBOEVENT(record->event) ? 0 : read_source_layers_cache(record->event.key);
     for (uint8_t i = 0; i < ARRAY_SIZE(default_overrides); ++i) {
         const vial_key_override_entry_t *override = &default_overrides[i];
         if (override->trigger == keycode && (override->layers & (1UL << layer))) {
@@ -405,6 +425,8 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
+    processing_combo_record = IS_COMBOEVENT(record->event);
+
     // LT() cannot encode OSM() in its tap keycode.
     if (keycode == LT(3, KC_LSFT) && record->tap.count) {
         if (record->event.pressed) {
