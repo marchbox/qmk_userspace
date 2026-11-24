@@ -84,7 +84,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 typedef struct {
     uint16_t tap_hold_keycode; // The LT()/MT() keycode as it appears in the keymap
     uint16_t tap_keycode;      // The keycode to emit on tap
-    uint16_t shifted_keycode;  // Optional: emitted instead when shift is held (0 = none)
 } tap_hold_override_t;
 
 // clang-format off
@@ -102,17 +101,69 @@ typedef struct {
 #define HRMR(K1, K2, K3, K4) RGUI_T(K1), RCTL_T(K2), RALT_T(K3), RSFT_T(K4)
 
 static const tap_hold_override_t tap_hold_overrides[] = {
-    {LT(LAYER_RAT, RSQT), RSQT,     0},
-    {LALT_T(KC_PLUS),     KC_PLUS,  0},
-    {LCTL_T(KC_EQL),      KC_EQL,   KC_PERC},
-    {LGUI_T(KC_DQT),      KC_DQT,   KC_QUOT},
-    {RGUI_T(KC_LPRN),     KC_LPRN,  0},
-    {RCTL_T(KC_RPRN),     KC_RPRN,  KC_AT},
-    {RALT_T(KC_LT),       KC_LT,    0},
-    {RSFT_T(KC_GT),       KC_GT,    0},
+    {LT(LAYER_RAT, RSQT), RSQT},
+    {LSFT_T(KC_PERC),     KC_PERC},
+    {LALT_T(KC_MINS),     KC_MINS},
+    {LCTL_T(KC_EQL),      KC_EQL},
+    {LGUI_T(KC_DQT),      KC_DQT},
+    {RGUI_T(KC_LPRN),     KC_LPRN},
+    {RCTL_T(KC_LCBR),     KC_LCBR},
+    {RALT_T(KC_LBRC),     KC_LBRC},
+    {RSFT_T(KC_LT),       KC_LT},
 };
 
 // clang-format on
+
+static const key_override_t *autoshift_override(uint16_t keycode);
+
+static uint16_t autoshift_tap_keycode(uint16_t keycode) {
+    for (uint8_t i = 0; i < ARRAY_SIZE(tap_hold_overrides); ++i) {
+        if (keycode == tap_hold_overrides[i].tap_hold_keycode) {
+            return tap_hold_overrides[i].tap_keycode;
+        }
+    }
+    if (IS_QK_MOD_TAP(keycode)) {
+        return QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+    }
+    if (IS_QK_LAYER_TAP(keycode)) {
+        return QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+    }
+    return keycode;
+}
+
+bool get_auto_shifted_key(uint16_t keycode, keyrecord_t *record) {
+    if (!get_autoshift_state()) {
+        return false;
+    }
+    uint16_t tap_keycode = autoshift_tap_keycode(keycode);
+    if (autoshift_override(tap_keycode)) {
+        return true;
+    }
+    if (IS_QK_MODS(tap_keycode)) {
+        tap_keycode = QK_MODS_GET_BASIC_KEYCODE(tap_keycode);
+    }
+    return (tap_keycode >= KC_A && tap_keycode <= KC_Z) || (tap_keycode >= KC_1 && tap_keycode <= KC_0) || (tap_keycode >= KC_MINS && tap_keycode <= KC_SLSH) || tap_keycode == KC_NUBS || tap_keycode == KC_TAB;
+}
+
+void autoshift_press_user(uint16_t keycode, bool shifted, keyrecord_t *record) {
+    keycode                        = autoshift_tap_keycode(keycode);
+    const key_override_t *override = shifted ? autoshift_override(keycode) : NULL;
+    if (override) {
+        del_weak_mods(MOD_MASK_SHIFT);
+        register_code16(override->replacement);
+    } else {
+        if (shifted) {
+            add_weak_mods(MOD_BIT(KC_LSFT));
+        }
+        register_code16(keycode);
+    }
+}
+
+void autoshift_release_user(uint16_t keycode, bool shifted, keyrecord_t *record) {
+    keycode                        = autoshift_tap_keycode(keycode);
+    const key_override_t *override = shifted ? autoshift_override(keycode) : NULL;
+    unregister_code16(override ? override->replacement : keycode);
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (keycode == NO_CHEESE) {
@@ -123,24 +174,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         return false;
     }
+    static bool manual_taps[ARRAY_SIZE(tap_hold_overrides)];
     for (uint8_t i = 0; i < ARRAY_SIZE(tap_hold_overrides); i++) {
         if (keycode == tap_hold_overrides[i].tap_hold_keycode) {
-            if (record->tap.count && record->event.pressed) {
-                uint16_t shifted = tap_hold_overrides[i].shifted_keycode;
-                if (shifted && (get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT) {
-                    uint8_t saved_mods    = get_mods();
-                    uint8_t saved_os_mods = get_oneshot_mods();
-                    del_mods(MOD_MASK_SHIFT);
-                    del_oneshot_mods(MOD_MASK_SHIFT);
-                    tap_code16(shifted);
-                    set_mods(saved_mods);
-                    set_oneshot_mods(saved_os_mods);
-                } else {
-                    tap_code16(tap_hold_overrides[i].tap_keycode);
-                }
-                return false;
+            if (!record->tap.count) {
+                return true;
             }
-            break;
+            if (!record->event.pressed) {
+                bool manual    = manual_taps[i];
+                manual_taps[i] = false;
+                return !manual;
+            }
+            if (get_autoshift_state() && get_auto_shifted_key(keycode, record) && !((get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT)) {
+                return true;
+            }
+            manual_taps[i]                 = true;
+            const key_override_t *override = autoshift_override(tap_hold_overrides[i].tap_keycode);
+            if (override && ((get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT)) {
+                uint8_t saved_mods    = get_mods();
+                uint8_t saved_os_mods = get_oneshot_mods();
+                del_mods(MOD_MASK_SHIFT);
+                del_oneshot_mods(MOD_MASK_SHIFT);
+                tap_code16(override->replacement);
+                set_mods(saved_mods);
+                set_oneshot_mods(saved_os_mods);
+            } else {
+                tap_code16(tap_hold_overrides[i].tap_keycode);
+            }
+            return false;
         }
     }
     return true;
@@ -170,11 +231,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_1, KC_2, KC_3, KC_4, KC_5,
         KC_6, KC_7, KC_8, KC_9, KC_0,
         // row 2
-        HRML(KC_MINS, KC_PLUS, KC_EQL, KC_DQT), KC_COLN,
-        KC_SCLN, HRMR(KC_LPRN, KC_RPRN, KC_LT, KC_GT),
+        HRML(KC_PERC, KC_MINS, KC_EQL, KC_DQT), KC_COLN,
+        KC_SCLN, HRMR(KC_LPRN, KC_LCBR, KC_LBRC, KC_LT),
         // row 3
-        KC_ASTR, KC_DLR, KC_AMPR, KC_EXLM, KC_GRV,
-        KC_SLSH, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC,
+        KC_ASTR, KC_PIPE, KC_AMPR, KC_EXLM, KC_GRV,
+        KC_SLSH, KC_DLR, KC_HASH, LDQT, LSQT,
         // thumbs
         KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS
@@ -226,23 +287,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 const uint16_t PROGMEM combo_def_1_2[] = {KC_W, KC_F, COMBO_END};
 const uint16_t PROGMEM combo_sym_1_2[] = {KC_2, KC_3, COMBO_END};
 const uint16_t PROGMEM combo_def_11_12[] = {LALT_T(KC_R), LCTL_T(KC_S), COMBO_END};
-const uint16_t PROGMEM combo_sym_11_12[] = {LALT_T(KC_PLUS), LCTL_T(KC_EQL), COMBO_END};
+const uint16_t PROGMEM combo_sym_11_12[] = {LALT_T(KC_MINS), LCTL_T(KC_EQL), COMBO_END};
 const uint16_t PROGMEM combo_def_21_22[] = {KC_X, KC_C, COMBO_END};
-const uint16_t PROGMEM combo_sym_21_22[] = {KC_DLR, KC_AMPR, COMBO_END};
+const uint16_t PROGMEM combo_sym_21_22[] = {KC_PIPE, KC_AMPR, COMBO_END};
 const uint16_t PROGMEM combo_def_21_22_23[] = {KC_X, KC_C, KC_D, COMBO_END};
-const uint16_t PROGMEM combo_sym_21_22_23[] = {KC_DLR, KC_AMPR, KC_EXLM, COMBO_END};
+const uint16_t PROGMEM combo_sym_21_22_23[] = {KC_PIPE, KC_AMPR, KC_EXLM, COMBO_END};
 const uint16_t PROGMEM combo_def_7_8[] = {KC_U, KC_Y, COMBO_END};
 const uint16_t PROGMEM combo_sym_7_8[] = {KC_8, KC_9, COMBO_END};
 const uint16_t PROGMEM combo_def_17_18[] = {RCTL_T(KC_E), RALT_T(KC_I), COMBO_END};
-const uint16_t PROGMEM combo_sym_17_18[] = {RCTL_T(KC_RPRN), RALT_T(KC_LT), COMBO_END};
+const uint16_t PROGMEM combo_sym_17_18[] = {RCTL_T(KC_LCBR), RALT_T(KC_LBRC), COMBO_END};
 const uint16_t PROGMEM combo_def_27_28[] = {KC_COMM, KC_DOT, COMBO_END};
-const uint16_t PROGMEM combo_sym_27_28[] = {KC_RCBR, KC_LBRC, COMBO_END};
+const uint16_t PROGMEM combo_sym_27_28[] = {KC_HASH, LDQT, COMBO_END};
 const uint16_t PROGMEM combo_def_26_27_28[] = {KC_H, KC_COMM, KC_DOT, COMBO_END};
-const uint16_t PROGMEM combo_sym_26_27_28[] = {KC_LCBR, KC_RCBR, KC_LBRC, COMBO_END};
+const uint16_t PROGMEM combo_sym_26_27_28[] = {KC_DLR, KC_HASH, LDQT, COMBO_END};
 const uint16_t PROGMEM combo_def_0_1_2_3[] = {KC_Q, KC_W, KC_F, KC_P, COMBO_END};
 const uint16_t PROGMEM combo_def_6_7_8_9[] = {KC_L, KC_U, KC_Y, KC_MINS, COMBO_END};
 const uint16_t PROGMEM combo_def_20_21_22_23[] = {LT(LAYER_RAT, KC_Z), KC_X, KC_C, KC_D, COMBO_END};
 const uint16_t PROGMEM combo_def_26_27_28_29[] = {KC_H, KC_COMM, KC_DOT, LT(LAYER_RAT, RSQT), COMBO_END};
+
+const uint16_t PROGMEM combo_ampr[] = {KC_Q, KC_W, COMBO_END};
+const uint16_t PROGMEM combo_coln[] = {KC_F, KC_P, COMBO_END};
+const uint16_t PROGMEM combo_astr[] = {KC_J, KC_L, COMBO_END};
+const uint16_t PROGMEM combo_scln[] = {KC_L, KC_U, COMBO_END};
+const uint16_t PROGMEM combo_pipe[] = {KC_Y, KC_MINS, COMBO_END};
+const uint16_t PROGMEM combo_perc[] = {LSFT_T(KC_A), LALT_T(KC_R), COMBO_END};
+const uint16_t PROGMEM combo_dqt[] = {LCTL_T(KC_S), LGUI_T(KC_T), COMBO_END};
+const uint16_t PROGMEM combo_lbrc[] = {KC_M, RGUI_T(KC_N), COMBO_END};
+const uint16_t PROGMEM combo_lprn[] = {RGUI_T(KC_N), RCTL_T(KC_E), COMBO_END};
+const uint16_t PROGMEM combo_lt[] = {RALT_T(KC_I), RSFT_T(KC_O), COMBO_END};
+const uint16_t PROGMEM combo_dlr[] = {LT(LAYER_RAT, KC_Z), KC_X, COMBO_END};
+const uint16_t PROGMEM combo_eql[] = {KC_C, KC_D, COMBO_END};
+const uint16_t PROGMEM combo_slsh[] = {KC_K, KC_H, COMBO_END};
+const uint16_t PROGMEM combo_lcbr[] = {KC_H, KC_COMM, COMBO_END};
+const uint16_t PROGMEM combo_hash[] = {KC_DOT, LT(LAYER_RAT, RSQT), COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(combo_def_1_2, KC_ESC),
@@ -259,51 +336,73 @@ combo_t key_combos[] = {
     COMBO(combo_sym_27_28, KC_ENT),
     COMBO(combo_def_20_21_22_23, G(KC_SPC)),
     COMBO(combo_def_26_27_28_29, KC_MUTE),
-    COMBO(combo_def_21_22_23, KC_SPC),
+    COMBO(combo_def_21_22_23, KC_GRV),
     COMBO(combo_sym_21_22_23, KC_SPC),
     COMBO(combo_def_26_27_28, KC_SPC),
     COMBO(combo_sym_26_27_28, KC_SPC),
     COMBO(combo_def_0_1_2_3, NO_CHEESE),
     COMBO(combo_def_6_7_8_9, TD(TD_SCRSHOT)),
+    COMBO(combo_ampr, KC_AMPR),
+    COMBO(combo_coln, KC_COLN),
+    COMBO(combo_astr, KC_ASTR),
+    COMBO(combo_scln, KC_SCLN),
+    COMBO(combo_pipe, KC_PIPE),
+    COMBO(combo_perc, KC_PERC),
+    COMBO(combo_dqt, KC_DQT),
+    COMBO(combo_lbrc, KC_LBRC),
+    COMBO(combo_lprn, KC_LPRN),
+    COMBO(combo_lt, KC_LT),
+    COMBO(combo_dlr, KC_DLR),
+    COMBO(combo_eql, KC_EQL),
+    COMBO(combo_slsh, KC_SLSH),
+    COMBO(combo_lcbr, KC_LCBR),
+    COMBO(combo_hash, KC_HASH),
 };
 
 const key_override_t ko_comm_ques = ko_make_basic(MOD_MASK_SHIFT, KC_COMM, KC_QUES);
 const key_override_t ko_dot_exlm = ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_EXLM);
 const key_override_t ko_rsqt_ndsh = ko_make_basic(MOD_MASK_SHIFT, RSQT, NDSH);
-const key_override_t ko_eql_perc = ko_make_basic(MOD_MASK_SHIFT, KC_EQL, KC_PERC);
+const key_override_t ko_perc_at = ko_make_basic(MOD_MASK_SHIFT, KC_PERC, KC_AT);
 const key_override_t ko_dqt_quot = ko_make_basic(MOD_MASK_SHIFT, KC_DQT, KC_QUOT);
 const key_override_t ko_coln_dot = ko_make_basic(MOD_MASK_SHIFT, KC_COLN, KC_DOT);
 const key_override_t ko_astr_circ = ko_make_basic(MOD_MASK_SHIFT, KC_ASTR, KC_CIRC);
-const key_override_t ko_dlr_hash = ko_make_basic(MOD_MASK_SHIFT, KC_DLR, KC_HASH);
-const key_override_t ko_ampr_pipe = ko_make_basic(MOD_MASK_SHIFT, KC_AMPR, KC_PIPE);
 const key_override_t ko_exlm_ques = ko_make_basic(MOD_MASK_SHIFT, KC_EXLM, KC_QUES);
 const key_override_t ko_scln_comm = ko_make_basic(MOD_MASK_SHIFT, KC_SCLN, KC_COMM);
-const key_override_t ko_rprn_at = ko_make_basic(MOD_MASK_SHIFT, KC_RPRN, KC_AT);
 const key_override_t ko_slsh_bsls = ko_make_basic(MOD_MASK_SHIFT, KC_SLSH, KC_BSLS);
-const key_override_t ko_lcbr_ldqt = ko_make_basic(MOD_MASK_SHIFT, KC_LCBR, LDQT);
-const key_override_t ko_rcbr_rdqt = ko_make_basic(MOD_MASK_SHIFT, KC_RCBR, RDQT);
-const key_override_t ko_lbrc_lsqt = ko_make_basic(MOD_MASK_SHIFT, KC_LBRC, LSQT);
-const key_override_t ko_rbrc_rsqt = ko_make_basic(MOD_MASK_SHIFT, KC_RBRC, RSQT);
+const key_override_t ko_lprn_rprn = ko_make_basic(MOD_MASK_SHIFT, KC_LPRN, KC_RPRN);
+const key_override_t ko_lcbr_rcbr = ko_make_basic(MOD_MASK_SHIFT, KC_LCBR, KC_RCBR);
+const key_override_t ko_lbrc_rbrc = ko_make_basic(MOD_MASK_SHIFT, KC_LBRC, KC_RBRC);
+const key_override_t ko_lt_gt = ko_make_basic(MOD_MASK_SHIFT, KC_LT, KC_GT);
+const key_override_t ko_ldqt_rdqt = ko_make_basic(MOD_MASK_SHIFT, LDQT, RDQT);
+const key_override_t ko_lsqt_rsqt = ko_make_basic(MOD_MASK_SHIFT, LSQT, RSQT);
 
 // This globally defines all key overrides to be used
 const key_override_t *key_overrides[] = {
     &ko_comm_ques,
     &ko_dot_exlm,
     &ko_rsqt_ndsh,
-    &ko_eql_perc,
+    &ko_perc_at,
     &ko_dqt_quot,
     &ko_coln_dot,
     &ko_astr_circ,
-    &ko_dlr_hash,
-    &ko_ampr_pipe,
     &ko_exlm_ques,
     &ko_scln_comm,
-    &ko_rprn_at,
     &ko_slsh_bsls,
-    &ko_lcbr_ldqt,
-    &ko_rcbr_rdqt,
-    &ko_lbrc_lsqt,
-    &ko_rbrc_rsqt,
+    &ko_lprn_rprn,
+    &ko_lcbr_rcbr,
+    &ko_lbrc_rbrc,
+    &ko_lt_gt,
+    &ko_ldqt_rdqt,
+    &ko_lsqt_rsqt,
 };
 
 // clang-format on
+
+static const key_override_t *autoshift_override(uint16_t keycode) {
+    for (uint8_t i = 0; i < ARRAY_SIZE(key_overrides); ++i) {
+        if (key_overrides[i]->trigger == keycode) {
+            return key_overrides[i];
+        }
+    }
+    return NULL;
+}
